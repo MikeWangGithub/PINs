@@ -23,7 +23,7 @@ namespace PINs.Threading
         protected CancellationTokenSource tokenSource;
         protected CancellationToken token;
         protected ILog log;
-        protected Task task;
+        protected Task<int> task;
         protected ICloneable ThreadParameter;
         // protected string reflectionName;
 
@@ -36,25 +36,26 @@ namespace PINs.Threading
             
         }
 
-        public virtual Task Run()
+        public virtual Task<int> Run()
         {
-            task = Task.Run(() => {
-                if (!CheckParameter()) return;
+            task = Task<int>.Run(() => {
+                if (!CheckParameter()) return -1;
                 DoSomethingBeforeRunSub();
-                RunSubThread();
+                int rtn = RunSubThread();
                 DoSomethingAfterRunSub();
-                //log.LogFinish(this.GetType().Name);
+                return rtn;
             });
             return task;
         }
         public virtual void DoSomethingBeforeRunSub()
         {
+            
         }
         public virtual void DoSomethingAfterRunSub()
         {
 
         }
-        public abstract void RunSubThread();
+        public abstract int RunSubThread();
         public abstract bool CheckParameter();
         public void IsTaskCanceled()
         {

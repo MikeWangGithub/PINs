@@ -22,7 +22,7 @@ namespace PINs.Threading
                                                      _threadParameter);
         }
 
-        public Task ThreadRun()
+        public Task<int> ThreadRun()
         {
             if (superThread != null)
             {

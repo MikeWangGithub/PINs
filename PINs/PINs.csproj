@@ -62,7 +62,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algorithm\RegularExpression.cs" />
+    <Compile Include="Algorithm\IHash.cs" />
+    <Compile Include="Algorithm\IBinaryTree.cs" />
+    <Compile Include="Algorithm\PINHash.cs" />
+    <Compile Include="Algorithm\PINRandom.cs" />
+    <Compile Include="Algorithm\PINRedBlackTree.cs" />
+    <Compile Include="Algorithm\PINRegularExpression.cs" />
+    <Compile Include="GlobalData\DigitSet.cs" />
+    <Compile Include="GlobalData\LoggerHelper.cs" />
+    <Compile Include="GlobalData\SystemConfiguration.cs" />
     <Compile Include="Threading\PINThread.cs" />
     <Compile Include="Threading\ThreadContext.cs" />
     <Compile Include="Threading\ThreadFactory.cs" />

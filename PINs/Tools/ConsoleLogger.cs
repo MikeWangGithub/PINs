@@ -10,7 +10,7 @@ namespace PINs.Tools
 {
     public class ConsoleLogger : ILog
     {
-        private RichTextBox _richTextBox;
+        private  RichTextBox _richTextBox;
 
         public ConsoleLogger():base()
         {
@@ -18,26 +18,34 @@ namespace PINs.Tools
         }
         public void SetObject(object obj)
         {
-            this._richTextBox = (RichTextBox)obj;
+            if (obj != null) {
+                try { 
+                    _richTextBox = (RichTextBox)obj;
+                }
+                catch
+                {
+
+                }
+            }
         }
         public void Info(string infoText)
         {
-            RecordColorLog($"[{DateTime.Now}][Info]:{infoText}", System.Drawing.Color.White);
+            RecordColorLog($"[{DateTime.Now.ToString("yy-MM-dd HH:mm:ss.ffffff")}][Info]:{infoText}", System.Drawing.Color.White);
         }
 
         public void Debug(string debugText)
         {
-            RecordColorLog($"[{DateTime.Now}][Debug]:{debugText}", System.Drawing.Color.YellowGreen);
+            RecordColorLog($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}][Debug]:{debugText}", System.Drawing.Color.YellowGreen);
         }
 
         public void Warn(string warmText)
         {
-            RecordColorLog($"[{DateTime.Now}][Warm]:{warmText}", System.Drawing.Color.Blue);
+            RecordColorLog($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}][Warn]:{warmText}", System.Drawing.Color.Blue);
         }
 
         public void Error(string errorText, Exception exception)
         {
-            RecordColorLog($"[{DateTime.Now}][Error]:{errorText} - Exception:{exception.Message}", System.Drawing.Color.Red);
+            RecordColorLog($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}][Error]:{errorText} - Exception:{exception.Message}", System.Drawing.Color.Red);
         }
 
 

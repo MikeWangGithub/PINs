@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace PINs.Algorithm
 {
-    public class RegularExpression
+    public class PINRegularExpression
     {
         public static bool IsMatch(string SourceString , string RegexString)
         {
@@ -36,6 +36,19 @@ namespace PINs.Algorithm
             if (regex.IsMatch(SourceString))
             {
                 rtn = true;
+            }
+            return rtn;
+        }
+        public static bool IsValidDigit(int Digit, string RightFormatString, List<string> RegexList)
+        {
+            bool rtn = true;
+            if(IsRightFormat(Digit.ToString(), RightFormatString))
+            {
+                rtn = !IsMatch(Digit.ToString(), RegexList);
+            }
+            else
+            {
+                rtn = false;
             }
             return rtn;
         }

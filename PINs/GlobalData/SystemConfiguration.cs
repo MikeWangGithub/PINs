@@ -3,44 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Configuration;
-namespace PINs.Tools
-{
-    //public class ParameterGetNumber : ICloneable
-    //{
-    //    public List<string> Regex { get; set; }
+using PINs.Tools;
 
-    //    public object Clone()
-    //    {
-    //        return this.MemberwiseClone();
-    //    }
-    //    public ParameterGetNumber()
-    //    {
-    //        Regex = "";
-    //    }
-    //}
-    public class ParameterSystem : ICloneable
+namespace PINs.GlobalData
+{
+    public static class SystemConfiguration
     {
-        private bool _Debug;
-        public bool Debug
+        private static bool _Debug;
+        public static bool Debug
         {
             get { return _Debug; }
         }
-        private void SetDebug(bool value)
+        private static void SetDebug(bool value)
         {
             _Debug = value;
         }
 
-        private string _LoggerClassName;
-        public string LoggerClassName { get { return _LoggerClassName; } }
-        private void SetLoggerClassName(string value)
+        private static string _LoggerClassName;
+        public static string LoggerClassName { get { return _LoggerClassName; } }
+        private static void SetLoggerClassName(string value)
         {
             _LoggerClassName = value;
         }
 
-        private List<string> _ExceptionNumberRegex;
-        public List<string> ExceptionNumberRegex { get { return _ExceptionNumberRegex; } }
-        private void SetExceptionNumberRegex(string ExceptionNumberStr)
+        private static List<string> _ExceptionNumberRegex;
+        public static List<string> ExceptionNumberRegex { get { return _ExceptionNumberRegex; } }
+        private static void SetExceptionNumberRegex(string ExceptionNumberStr)
         {
             string RegexStr = ExceptionNumberStr;
             if (_ExceptionNumberRegex == null)
@@ -50,80 +38,74 @@ namespace PINs.Tools
             _ExceptionNumberRegex = RegexStr.Split('|').ToList<string>();
         }
 
-        private string _RightNumberRegex;
-        public string RightNumberRegex { get { return _RightNumberRegex; } }
-        private void SetRightNumberRegex(string value)
+        private static  string _RightNumberRegex;
+        public static string RightNumberRegex { get { return _RightNumberRegex; } }
+        private static void SetRightNumberRegex(string value)
         {
             _RightNumberRegex = value;
         }
-        private int _MinDigit;
-        public int MinDigit { get { return _MinDigit; } }
-        private void SetMinDigit(int value)
+        private static int _MinDigit;
+        public static int MinDigit { get { return _MinDigit; } }
+        private static void SetMinDigit(int value)
         {
             _MinDigit = value;
         }
-        private int _MaxDigit;
-        public int MaxDigit { get { return _MaxDigit; } }
-        private void SetMaxDigit(int value)
+        private static int _MaxDigit;
+        public static int MaxDigit { get { return _MaxDigit; } }
+        private static void SetMaxDigit(int value)
         {
             _MaxDigit = value;
         }
-        private string _ExceptionDigitFileName;
-        public string ExceptionDigitFileName { get { return _ExceptionDigitFileName; } }
-        private void SetExceptionDigitFileName(string value)
+        private static  string _ExceptionDigitFileName;
+        public static  string ExceptionDigitFileName { get { return _ExceptionDigitFileName; } }
+        private static void SetExceptionDigitFileName(string value)
         {
             _ExceptionDigitFileName = value;
         }
-        private string _UsedDigitFileName;
-        public string UsedDigitFileName { get { return _UsedDigitFileName; } }
+        private static string _UsedDigitFileName;
+        public static string UsedDigitFileName { get { return _UsedDigitFileName; } }
 
-        private void SetUsedDigitFileName(string value)
+        private static void SetUsedDigitFileName(string value)
         {
             _UsedDigitFileName = value;
         }
 
-        private string _UnusedDigitFileName;
-        public string UnusedDigitFileName { get { return _UnusedDigitFileName; } }
-        private void SetUnusedDigitFileName(string value)
+        private static  string _UnusedDigitFileName;
+        public static string UnusedDigitFileName { get { return _UnusedDigitFileName; } }
+        private static void SetUnusedDigitFileName(string value)
         {
             _UnusedDigitFileName = value;
         }
 
-        public string AppPath { get; }
-        public string ExecutedPath { get; }
+        private static string _AppPath;
+        public static string AppPath { get { return _AppPath; } }
+        private static void SetAppPath(string value)
+        {
+            _AppPath = value;
+        }
 
-        private bool _IsNeedNewGeneration;
-        public bool IsNeedNewGeneration { get { return _IsNeedNewGeneration; } }
+        private static string _ExecutedPath;
+        public static string ExecutedPath { get { return _ExecutedPath; } }
+        private static void SetExecutedPath(string value)
+        {
+            _ExecutedPath = value;
+        }
+        private static bool _IsNeedNewGeneration;
+        public static bool IsNeedNewGeneration { get { return _IsNeedNewGeneration; } }
 
-        private void SetIsNeedNewGeneration(bool value)
+        private static void SetIsNeedNewGeneration(bool value)
         {
             _IsNeedNewGeneration = value;
         }
 
 
-        public object Clone()
+        
+        public static void Initial(string executedPath)
         {
-            return this.MemberwiseClone();
-        }
-        public ParameterSystem(string executedPath)
-        {
-            ExecutedPath = executedPath;
-            AppPath = System.IO.Directory.GetCurrentDirectory();
-            //Set AppPath
-            //if (System.IO.Directory.Exists(ExecutedPath))
-            //{
-            //    AppPath = appPath;
-            //    if (AppPath.Substring(AppPath.Length - 1, 1) == "\\")
-            //    {
-            //        AppPath = AppPath.Substring(0, AppPath.Length - 1);
-            //    }
-            //}
-            //else
-            //{
-            //    AppPath = "";
-            //}
-
-            Initial();
+            SetExecutedPath(executedPath);
+            SetAppPath(System.IO.Directory.GetCurrentDirectory());
+        
+            LoadConfiguraion();
             if ((!IsExistsExceptionDigitFile()) || (!IsExistsUsedDigitFile()) || (!IsExistsUnusedDigitFile()))
             {
                 if (!IsNeedNewGeneration)
@@ -144,7 +126,7 @@ namespace PINs.Tools
             }
 
         }
-        private void Initial()
+        private static void LoadConfiguraion()
         {
 
             //Set debug
@@ -185,23 +167,22 @@ namespace PINs.Tools
             SetIsNeedNewGeneration(AppConfig.GetAppConfig("IsNeedNewGeneration").Trim().ToLower() == "true" ? true : false);
 
         }
-        public bool IsExistsExceptionDigitFile()
+        public static bool IsExistsExceptionDigitFile()
         {
             return System.IO.File.Exists(ExceptionDigitFileName);
         }
-        public bool IsExistsUsedDigitFile()
+        public static bool IsExistsUsedDigitFile()
         {
             return System.IO.File.Exists(UsedDigitFileName);
         }
-        public bool IsExistsUnusedDigitFile()
+        public static  bool IsExistsUnusedDigitFile()
         {
             return System.IO.File.Exists(UnusedDigitFileName);
         }
 
-        public bool SaveIsNeedNewGeneration(bool value)
+        public static bool SaveIsNeedNewGeneration(bool value)
         {
-            return AppConfig.SaveAppConfig(this.ExecutedPath, "IsNeedNewGeneration", value.ToString());
+            return AppConfig.SaveAppConfig(ExecutedPath, "IsNeedNewGeneration", value.ToString());
         }
     }
-    public enum PINThreadName { GetNumber = 1 } 
 }
