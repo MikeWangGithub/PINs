@@ -71,6 +71,7 @@
     <Compile Include="GlobalData\DigitSet.cs" />
     <Compile Include="GlobalData\LoggerHelper.cs" />
     <Compile Include="GlobalData\SystemConfiguration.cs" />
+    <Compile Include="Threading\ThreadDigitInitial.cs" />
     <Compile Include="Threading\PINThread.cs" />
     <Compile Include="Threading\ThreadContext.cs" />
     <Compile Include="Threading\ThreadFactory.cs" />

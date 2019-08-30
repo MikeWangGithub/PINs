@@ -14,6 +14,27 @@ namespace PINs.GlobalData
         private static PINHash _UnusedHash;
         private static PINHash _ExceptionHash;
 
+        private static bool UsedHashStatus;
+        private static bool UnusedHashStatus;
+        private static bool ExceptionHashtatus;
+
+        public static bool DigitSetStatus
+        {
+            get
+            {
+                if (UsedHashStatus && UnusedHashStatus && ExceptionHashtatus)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        static DigitSet()
+        {
+            UsedHashStatus = false;
+            UnusedHashStatus = false;
+            ExceptionHashtatus = false;
+        }
         public static PINHash UsedHash { get { return _UsedHash; } }
         public static PINHash UnusedHash { get { return _UnusedHash; } }
         public static PINHash ExceptionHash { get { return _ExceptionHash; } }
@@ -21,7 +42,44 @@ namespace PINs.GlobalData
         private static object LockUsedHash = new object();
         private static object LockUnusedHash = new object();
         private static object LockExceptionHash = new object();
+        private static object LockDigitSetStatus = new object();
 
+        public static void SetReInitial()
+        {
+            lock (LockUnusedHash)
+            {
+                UnusedHashStatus = false;
+            }
+            lock (LockUsedHash)
+            {
+                UsedHashStatus = false;  
+            }
+            lock (LockExceptionHash)
+            {
+                ExceptionHashtatus = false; 
+            }
+            lock (LockUsedHash)
+            {
+                if (_UsedHash == null)
+                    _UsedHash = new PINHash();
+                else
+                    _UsedHash.Clear();
+            }
+            lock (LockUnusedHash)
+            {
+                if (_UnusedHash == null)
+                    _UnusedHash = new PINHash();
+                else
+                    _UnusedHash.Clear();
+            }
+            lock (LockExceptionHash)
+            {
+                if (_ExceptionHash == null)
+                    _ExceptionHash = new PINHash();
+                else
+                    _ExceptionHash.Clear();
+            }
+        }
         /// <summary>
         /// Initial 3 PINHash
         /// </summary>
@@ -49,8 +107,7 @@ namespace PINs.GlobalData
             {
                 //generated 3 binary tree files
                 //......
-                LoggerHelper.Info("prepare array ...\r\n");
-                int[] UnusedList = new int[SystemConfiguration.MaxDigit - SystemConfiguration.MinDigit + 1];
+                Debug("prepare unused set ...\r\n");
                 for (int i = SystemConfiguration.MinDigit; i <= SystemConfiguration.MaxDigit; i++)
                 {
                     lock (LockExceptionHash)
@@ -58,8 +115,21 @@ namespace PINs.GlobalData
                         _UnusedHash.Insert(i);
                     }
                 }
-                
-                LoggerHelper.Info("save unused ...\r\n");
+                Debug("Unused set is OK ...\r\n");
+                lock (LockUnusedHash)
+                {
+                    UnusedHashStatus = true;
+                }
+                lock (LockUsedHash) { 
+                    UsedHashStatus = true;  //UsedHash contains 0 data.
+                }
+                lock (LockExceptionHash)
+                {
+                    ExceptionHashtatus = true; //ExceptionHash contains 0 data.
+                }
+                Debug("All of digit Set is OK ...\r\n");
+                LoggerHelper.Info("Digit Set is prepared.\r\n");
+
                 try
                 {
                     StreamWriter sw = new StreamWriter(SystemConfiguration.UnusedDigitFileName, false, Encoding.UTF8);
@@ -74,20 +144,37 @@ namespace PINs.GlobalData
                 {
                     //rtn = false;
                 }
-                LoggerHelper.Info("save exception ...\r\n");
+                Debug("Unused set is saved  to file...\r\n");
                 _ExceptionHash.SaveToFile(SystemConfiguration.ExceptionDigitFileName);
-                LoggerHelper.Info("save used ...\r\n");
+                Debug("exception set is saved to file...\r\n");
                 _UsedHash.SaveToFile(SystemConfiguration.UsedDigitFileName);
+                Debug("used set is saved to file...\r\n");
 
             }
             else {
-                LoggerHelper.Info("load excepiton ...\r\n");
-                _ExceptionHash.OpenFromFile(SystemConfiguration.ExceptionDigitFileName);
-                LoggerHelper.Info("load used ...\r\n");
-                _UsedHash.OpenFromFile(SystemConfiguration.UsedDigitFileName);
-                LoggerHelper.Info("load unused ...\r\n");
-                _UnusedHash.OpenFromFile(SystemConfiguration.UnusedDigitFileName);
-                LoggerHelper.Info("DigitSet Initial() is end ...\r\n");
+                if((UsedHashStatus==false) && (UnusedHashStatus==false) && (ExceptionHashtatus == false)) { 
+                    _ExceptionHash.OpenFromFile(SystemConfiguration.ExceptionDigitFileName);
+                    lock (LockExceptionHash)
+                    {
+                        ExceptionHashtatus = true; 
+                    }
+                    Debug("excepiton set is loaded ...\r\n");
+
+                    _UsedHash.OpenFromFile(SystemConfiguration.UsedDigitFileName);
+                    lock (LockUsedHash)
+                    {
+                        UsedHashStatus = true;  
+                    }
+                    Debug("used set is loaded ...\r\n");
+
+                    _UnusedHash.OpenFromFile(SystemConfiguration.UnusedDigitFileName);
+                    lock (LockUnusedHash)
+                    {
+                        UnusedHashStatus = true;
+                    }
+                    Debug("unused set id loaded ...\r\n");
+                }
+
             }
             
         }
@@ -262,5 +349,12 @@ namespace PINs.GlobalData
             }
         }
 
+        private static void Debug(string DebugText)
+        {
+            if (SystemConfiguration.Debug)
+            {
+                LoggerHelper.Debug(DebugText);
+            }
+        }
     }
 }

@@ -20,7 +20,8 @@ namespace PINs.Threading
 
         public override bool CheckParameter()
         {
-            DigitSet.Initial();
+            if(!DigitSet.DigitSetStatus)
+                DigitSet.Initial();
             return true;
         }
 
@@ -43,17 +44,22 @@ namespace PINs.Threading
                         //valid digit
                         DigitSet.UsedHashInsert(rtn);
                         DigitSet.UnusedHashDelete(rtn);
+                        if (DigitSet.UnusedHash.Length <= 0)
+                        {
+                            break;
+                        }
                     }
                     else { 
                         //invalid digit
                         DigitSet.ExceptionHashInsert(rtn);
                         DigitSet.UnusedHashDelete(rtn);
+                        if (DigitSet.UnusedHash.Length <= 0)
+                        {
+                            rtn = -1;
+                            break;
+                        }
                     }
-                    if (DigitSet.UnusedHash.Length <= 0)
-                    {
-                        rtn = -1;
-                        break;
-                    }
+                    
                 }
                 //Update File
                 DigitSet.UsedHashSaveToFile(SystemConfiguration.UsedDigitFileName);
@@ -68,22 +74,24 @@ namespace PINs.Threading
             return rtn;
         }
 
-        
+
         public override void DoSomethingBeforeRunSub()
         {
             base.DoSomethingBeforeRunSub();
-            if (SystemConfiguration.Debug)
-            {
-                log.Debug(this.GetType().ToString() + " threading started.\r\n");
-            }
+            Debug(this.GetType().ToString() + " threading started.\r\n");
+
 
         }
         public override void DoSomethingAfterRunSub()
         {
             base.DoSomethingAfterRunSub();
+            Debug(this.GetType().ToString() + " threading finished.\r\n");
+        }
+        private void Debug(string DebugText)
+        {
             if (SystemConfiguration.Debug)
             {
-                log.Debug(this.GetType().ToString() + " threading finished.\r\n");
+                log.Debug(DebugText);
             }
         }
         private bool IsValidDigit(int t)

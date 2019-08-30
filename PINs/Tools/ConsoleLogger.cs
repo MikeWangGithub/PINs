@@ -69,6 +69,7 @@ namespace PINs.Tools
                 this._richTextBox.AppendText(text);
                 this._richTextBox.Select(start, len);
                 this._richTextBox.SelectionColor = color;
+                this._richTextBox.ScrollToCaret();
                 
             }
         }

@@ -18,6 +18,9 @@ namespace PINs.Threading
                 case PINThreadName.GetNumber:
                     thread = new ThreadGetNumber(_log, _tokenSource, _threadParameter);
                     break;
+                case PINThreadName.DigitInitial:
+                    thread = new ThreadDigitInitial(_log, _tokenSource, _threadParameter);
+                    break;
                 default:
                     break;
             }

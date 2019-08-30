@@ -37,6 +37,10 @@ namespace PINs
             SystemConfiguration.Initial(System.Windows.Forms.Application.ExecutablePath);
             LoggerHelper.Initial(this.txtLog);
             this.txtNumber.Clear();
+            this.txtCheckPIN.Clear();
+            //Don't need to wait thread. So don't use await and async
+            RunThread(PINThreadName.DigitInitial);
+            //LoggerHelper.Info("Form Initial finished.");
 
         }
 
@@ -96,16 +100,25 @@ namespace PINs
                 case PINThreadName.GetNumber:
                     param = this.GetGetNumberParameter();
                     break;
-                
+                case PINThreadName.DigitInitial:
+                    param = this.GetDigitInitialParameter();
+                    break;
                 default:
                     break;
             }
             return param;
         }
 
-        private ParameterSystem GetGetNumberParameter()
+        private ICloneable GetGetNumberParameter()
         {
             return null;
+
+        }
+        private DigitInitialParameter GetDigitInitialParameter()
+        {
+            DigitInitialParameter param = new DigitInitialParameter();
+            param.SetRefreshQuantityFunction(this.RefreshQuantity);
+            return param;
 
         }
         #endregion End Threading functions
@@ -120,12 +133,20 @@ namespace PINs
             this.btnGetNumber.Enabled = isEnabled;
             
         }
+        private void SetDigitInitialButtonStatus(bool isEnabled)
+        {
+            this.btnCheckPIN.Enabled = isEnabled;
+
+        }
         private void SetButtonStatus(PINThreadName ThreadName, bool flag)
         {
             switch (ThreadName)
             {
                 case PINThreadName.GetNumber:
                     this.SetGetNumberButtonStatus(flag);
+                    break;
+                case PINThreadName.DigitInitial:
+                    this.SetDigitInitialButtonStatus(flag);
                     break;
                 default:
                     break;
@@ -135,32 +156,91 @@ namespace PINs
 
         private async void BtnGetNumber_Click(object sender, EventArgs e)
         {
+            if (!DigitSet.DigitSetStatus)
+            {
+                await RunThread(PINThreadName.DigitInitial);
+            }
             int randomDigtit = await RunThread(PINThreadName.GetNumber);
             if (randomDigtit >= SystemConfiguration.MinDigit) { 
                 this.txtNumber.Text = randomDigtit.ToString();
+                RefreshQuantity();
             }
             else
             {
                 //Digit run out
-                if(System.Windows.Forms.MessageBox.Show("All of digits have been used. Do you want to rebuild unused digits?\r\n\r\nIf you click \"Yes\", then program will create the same new unused digits' set as the beginning."
+                if(System.Windows.Forms.MessageBox.Show("All of digits have been used. Do you want to rebuild unused digits?\r\n\r\nIf you click \"Yes\", then program will create the same new unused digits' set as the beginning.\r\nIf you click \"No\" ,do nothing."
                     ,"Infomation"
                     , MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     System.IO.File.Delete(SystemConfiguration.ExceptionDigitFileName);
                     System.IO.File.Delete(SystemConfiguration.UnusedDigitFileName);
                     System.IO.File.Delete(SystemConfiguration.UsedDigitFileName);
+                    DigitSet.SetReInitial();
                     this.BtnGetNumber_Click(sender, e);
                 }
             }
 
         }
+        private void RefreshQuantity()
+        {
+            if (this.lbUsedPINQuantity.InvokeRequired)
+            {
+                this.lbUsedPINQuantity.Parent.Invoke(new SafeCallDelegate(this.RefreshQuantity));
+            }
+            else
+            {
+                this.lbUsedPINQuantity.Text = DigitSet.UsedHash.Length.ToString();
+            }
+        }
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            
+            //for(int i = 1; i <= 9995; i++)
+            //{
+            //    this.BtnGetNumber_Click(null, null);
+
+            //}
 
         }
 
+        private async void BtnCheckPIN_Click(object sender, EventArgs e)
+        {
+            if (!DigitSet.DigitSetStatus)
+            {
+                await RunThread(PINThreadName.DigitInitial);
+            }
+            CheckPIN(txtCheckPIN.Text.Trim());
+        }
+        private void CheckPIN(string text)
+        {
+            int digit = 0;
+            try
+            {
+                digit = System.Convert.ToInt32(text);
+            }
+            catch
+            {
+                LoggerHelper.Warn("[" + text + "] is not a valid integer \r\n");
+                return;
+            }
+            if (DigitSet.UsedHash.Contains(digit))
+            {
+                LoggerHelper.Info("[" + text + "] is a valid digit and hasn't been used.\r\n");
+            }
+            else
+            {
+                if (PINRegularExpression.IsValidDigit(digit,SystemConfiguration.RightNumberRegex,SystemConfiguration.ExceptionNumberRegex))
+                {
+                    LoggerHelper.Info("[" + text + "] has not been used and this is a valid digit.\r\n");
+                }
+                else
+                {
+                    LoggerHelper.Info("[" + text + "] has not been used and this is a invalid digit.\r\n");
+                }
+            }
+            
+
+        }
     }
 }
 
