@@ -31,13 +31,13 @@ namespace PINs.Tools
             bool rtn = true;
             try
             {
-                //参数传的是应用程序的路径
+                
                 Configuration con = ConfigurationManager.OpenExeConfiguration(AppPath);
                 con.AppSettings.Settings[strKey].Value = value;
-                //保存配置文件
+                //
                 con.AppSettings.SectionInformation.ForceSave = true;
                 con.Save(ConfigurationSaveMode.Modified);
-                //重新加载改变的节点
+                //
                 ConfigurationManager.RefreshSection("appSettings");
             }
             catch (Exception ex)

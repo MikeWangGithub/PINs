@@ -9,14 +9,34 @@ using PINs.GlobalData;
 
 namespace PINs.Algorithm
 {
+    /// <summary>
+    /// Hash Class, include various implementation of insert,delete...
+    /// </summary>
     public class PINHash:IHash<int>
     {
+        private object Lockobject = new object();
+        private ISaveData<int> SaveObject;
+        private ILoadData LoadObject;
+
+        /// <summary>
+        /// .Net HashSet Object. Only be operated by class self.
+        /// </summary>
         private System.Collections.Generic.HashSet<int> hash;
+        /// <summary>
+        /// ReadOnly Property, for exampel :foreach (var item in Items) 
+        /// </summary>
         public System.Collections.Generic.HashSet<int> Items { get { return hash; } }
+        /// <summary>
+        /// encapsulate log class
+        /// </summary>
+        /// <param name="text">log content</param>
         private void Info(string text)
         {
             LoggerHelper.Info(text);
         }
+        /// <summary>
+        /// quantity of nodes
+        /// </summary>
         public int Length
         {
             get { return hash.Count<int>(); }
@@ -30,7 +50,7 @@ namespace PINs.Algorithm
         /// Get Node's value by Index
         /// </summary>
         /// <param name="Index">Index start from 1.</param>
-        /// <returns></returns>
+        /// <returns>if Index is valid ,return real value otherwise ,return -1</returns>
         public int GetValue(int Index)
         {
             
@@ -41,10 +61,18 @@ namespace PINs.Algorithm
             }
             return -1;
         }
+        /// <summary>
+        /// Clear all of nodes
+        /// </summary>
         public void Clear()
         {
             hash.Clear();
         }
+        /// <summary>
+        /// add a node(a PIN） to HashSet
+        /// </summary>
+        /// <param name="t">PIN</param>
+        /// <returns>Operation is sucessful,return true otherwise false</returns>
         public bool Insert(int t)
         {
             bool rtn = true;
@@ -64,6 +92,11 @@ namespace PINs.Algorithm
             return rtn;
 
         }
+        /// <summary>
+        /// delete a node(a PIN） from HashSet
+        /// </summary>
+        /// <param name="t">PIN</param>
+        /// <returns>Operation is sucessful,return true otherwise false</returns>
         public bool Delete(int t)
         {
 
@@ -83,62 +116,50 @@ namespace PINs.Algorithm
             return rtn;
 
         }
+        /// <summary>
+        /// Judge HashSet include a PIN
+        /// </summary>
+        /// <param name="t">PIN</param>
+        /// <returns>if PIN is exist return true , if not return false</returns>
         public bool Contains(int t)
         {
             return hash.Contains(t);
         }
-
+        /// <summary>
+        /// Save all of nodes to a physical file
+        /// </summary>
+        /// <param name="FileName">filename which include fullpath</param>
+        /// <returns>Operation is sucessful,return true otherwise false</returns>
         public bool SaveToFile(string FileName)
         {
-            bool rtn;
-            try
-            {
-                StreamWriter sw = new StreamWriter(FileName, false, Encoding.UTF8);
-                foreach (int item in hash)
-                {
-                    sw.WriteLine(item);
-                }
-                sw.Close();
-                rtn = true;
+            lock (Lockobject) { 
+                SaveObject = ObjectBuildFactory<ISaveData<int>>.Instance(SystemConfiguration.SaveDataClassName);
+                if (SaveObject!=null)
+                    SaveObject.SetSaveObject(hash);
             }
-            catch (Exception ex)
-            {
-                rtn = false;
-            }
-            return rtn;
-
+            if (SaveObject != null)
+                return SaveObject.Save(FileName);
+            else
+                return false;
+           
         }
-
+        /// <summary>
+        /// Load PIN data from a physical file
+        /// </summary>
+        /// <param name="FileName">filename which include fullpath</param>
+        /// <returns>Operation is sucessful,return true otherwise false</returns>
         public bool OpenFromFile(string FileName)
         {
-
-            bool rtn;
-            try
+            lock (Lockobject)
             {
-                StreamReader sr = new StreamReader(FileName, Encoding.UTF8);
-                string s;
-                Clear();
-                while ((s = sr.ReadLine()) != null)
-                {
-                    try
-                    {
-                        int item = System.Convert.ToInt32(s);
-                        Insert(item);
-                    }
-                    catch
-                    {
-                        //Throw away non-digital string
-                    }
-
-                }
-                sr.Close();
-                rtn = true;
+                LoadObject = ObjectBuildFactory<ILoadData>.Instance(SystemConfiguration.LoadDataClassName);
+                if (LoadObject != null)
+                    LoadObject.SetLoadObject(hash);
             }
-            catch (Exception ex)
-            {
-                rtn = false;
-            }
-            return rtn;
+            if (LoadObject != null)
+                return LoadObject.Load(FileName);
+            else
+                return false;
 
 
         }

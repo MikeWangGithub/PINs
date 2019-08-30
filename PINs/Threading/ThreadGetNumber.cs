@@ -22,7 +22,7 @@ namespace PINs.Threading
         {
             if(!DigitSet.DigitSetStatus)
                 DigitSet.Initial();
-            return true;
+            return DigitSet.DigitSetStatus;
         }
 
 

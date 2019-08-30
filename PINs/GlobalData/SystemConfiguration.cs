@@ -26,6 +26,20 @@ namespace PINs.GlobalData
             _LoggerClassName = value;
         }
 
+        private static string _SaveDataClassName;
+        public static string SaveDataClassName { get { return _SaveDataClassName; } }
+        private static void SetSaveDataClassName(string value)
+        {
+            _SaveDataClassName = value;
+        }
+
+        private static string _LoadDataClassName;
+        public static string LoadDataClassName { get { return _LoadDataClassName; } }
+        private static void SetLoadDataClassName(string value)
+        {
+            _LoadDataClassName = value;
+        }
+
         private static List<string> _ExceptionNumberRegex;
         public static List<string> ExceptionNumberRegex { get { return _ExceptionNumberRegex; } }
         private static void SetExceptionNumberRegex(string ExceptionNumberStr)
@@ -133,6 +147,10 @@ namespace PINs.GlobalData
             SetDebug((AppConfig.GetAppConfig("debug").Trim().ToLower() == "true") ? true : false);
             //Set logger
             SetLoggerClassName(AppConfig.GetAppConfig("Logger"));
+            //Set 
+            SetSaveDataClassName(AppConfig.GetAppConfig("SaveDataClass"));
+            //Set 
+            SetLoadDataClassName(AppConfig.GetAppConfig("LoadDataClass"));
             //Set 
             SetExceptionNumberRegex(AppConfig.GetAppConfig("ExceptionNumber"));
             //RightNumber

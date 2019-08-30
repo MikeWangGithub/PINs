@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace PINs.Algorithm
 {
+    /// <summary>
+    /// Encapsulate Random Functions
+    /// </summary>
     public class PINRandom
     {
+        /// <summary>
+        /// Static object
+        /// </summary>
         private static System.Random ran = new System.Random((int)System.DateTime.Now.Ticks);
         /// <summary>
         /// Both max and min must be positive number and max must be bigger than min
@@ -15,7 +21,7 @@ namespace PINs.Algorithm
         /// </summary>
         /// <param name="max">A positive number</param>
         /// <param name="min">A positive number</param>
-        /// <returns></returns>
+        /// <returns>a randomo integer </returns>
         public static int GetRandomDigit(int min,int max)
         {
             int rtn = -1;

@@ -20,8 +20,6 @@ namespace PINs
     {
         #region  variable
 
-
-
         private Task<int> task;
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
@@ -200,6 +198,8 @@ namespace PINs
             //    this.BtnGetNumber_Click(null, null);
 
             //}
+            SaveDataToFile<int> x = new SaveDataToFile<int>();
+            LoggerHelper.Info(x.GetType().ToString());
 
         }
 
@@ -225,7 +225,7 @@ namespace PINs
             }
             if (DigitSet.UsedHash.Contains(digit))
             {
-                LoggerHelper.Info("[" + text + "] is a valid digit and hasn't been used.\r\n");
+                LoggerHelper.Info("[" + text + "] is a valid digit and has been used.\r\n");
             }
             else
             {

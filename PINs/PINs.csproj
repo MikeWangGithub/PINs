@@ -87,8 +87,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\ConsoleLogger.cs" />
     <Compile Include="Tools\DelegateClass.cs" />
+    <Compile Include="Tools\ILoadData.cs" />
     <Compile Include="Tools\ILog.cs" />
+    <Compile Include="Tools\ISaveData.cs" />
+    <Compile Include="Tools\LoadDataFromFile.cs" />
     <Compile Include="Tools\ObjectBuildFactory.cs" />
+    <Compile Include="Tools\SaveDataToFile.cs" />
     <Compile Include="Tools\ThreadParameter.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

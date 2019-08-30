@@ -8,15 +8,7 @@ using PINs.Tools;
 
 namespace PINs.Threading
 {
-    //public interface IThread
-    //{
-    //    Task Run();
-    //    void SubthreadRun();
-
-    //    bool CheckParameter();
-    //    void IsTaskCanceled();
-
-    //}
+  
 
     public abstract class PINThread
     {

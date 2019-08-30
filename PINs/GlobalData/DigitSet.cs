@@ -42,7 +42,7 @@ namespace PINs.GlobalData
         private static object LockUsedHash = new object();
         private static object LockUnusedHash = new object();
         private static object LockExceptionHash = new object();
-        private static object LockDigitSetStatus = new object();
+   
 
         public static void SetReInitial()
         {

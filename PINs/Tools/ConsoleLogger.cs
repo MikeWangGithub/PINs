@@ -30,24 +30,23 @@ namespace PINs.Tools
         }
         public void Info(string infoText)
         {
-            RecordColorLog($"[{DateTime.Now.ToString("yy-MM-dd HH:mm:ss.ffffff")}][Info]:{infoText}", System.Drawing.Color.White);
+            RecordColorLog($"[{DateTime.Now.ToString("yy-MM-dd HH:mm")}][Info]:{infoText}", System.Drawing.Color.White);
         }
 
         public void Debug(string debugText)
         {
-            RecordColorLog($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}][Debug]:{debugText}", System.Drawing.Color.YellowGreen);
+            RecordColorLog($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm")}][Debug]:{debugText}", System.Drawing.Color.YellowGreen);
         }
 
         public void Warn(string warmText)
         {
-            RecordColorLog($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}][Warn]:{warmText}", System.Drawing.Color.Blue);
+            RecordColorLog($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm")}][Warn]:{warmText}", System.Drawing.Color.Blue);
         }
 
         public void Error(string errorText, Exception exception)
         {
-            RecordColorLog($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}][Error]:{errorText} - Exception:{exception.Message}", System.Drawing.Color.Red);
+            RecordColorLog($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm")}][Error]:{errorText} - Exception:{exception.Message}", System.Drawing.Color.Red);
         }
-
 
         public void RecordColorLog(string text, System.Drawing.Color color)
         {

@@ -20,7 +20,9 @@ namespace PINs.GlobalData
                 {
                     lock (LockObect) { 
                         log = ObjectBuildFactory<ILog>.Instance(SystemConfiguration.LoggerClassName);
-                        log.SetObject(obj);
+                        if (log != null) { 
+                           log.SetObject(obj);
+                        }
                     }
                 }
                 catch
