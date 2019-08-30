@@ -19,7 +19,9 @@ namespace PINs
     public partial class MainForm : Form
     {
         #region  variable
-
+        /// <summary>
+        /// MulitThread variable and record the valid PIN
+        /// </summary>
         private Task<int> task;
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
@@ -32,17 +34,23 @@ namespace PINs
 
         public void Initial()
         {
+            //Initial Global System Configuration
             SystemConfiguration.Initial(System.Windows.Forms.Application.ExecutablePath);
+            //Inital Global LogClass
             LoggerHelper.Initial(this.txtLog);
+            //Clear TextBox.Text 
             this.txtNumber.Clear();
+            //Clear TextBox.Text 
             this.txtCheckPIN.Clear();
             //Don't need to wait thread. So don't use await and async
             RunThread(PINThreadName.DigitInitial);
-            //LoggerHelper.Info("Form Initial finished.");
-
+            
         }
 
         #region Threading functions
+        /// <summary>
+        /// Cancel Thread.
+        /// </summary>
         private void CancelTask()
         {
             if (tokenSource != null)
@@ -53,11 +61,20 @@ namespace PINs
                 }
             }
         }
+        /// <summary>
+        /// Set tokenSource for Start a new Thread
+        /// </summary>
+        /// <returns></returns>
         private CancellationTokenSource StartNewTask()
         {
             tokenSource = new CancellationTokenSource();
             return tokenSource;
         }
+        /// <summary>
+        /// Execute a thread
+        /// </summary>
+        /// <param name="ThreadName"></param>
+        /// <returns></returns>
         private async Task<int> RunThread(PINThreadName ThreadName)
         {
             DateTime dt1, dt2;
@@ -65,12 +82,17 @@ namespace PINs
             int rtn = -1;
             try
             {
-
+                //Set buttons enabled to be disenable
                 this.SetButtonStatus(ThreadName, false);
+                
                 CancellationTokenSource tokenSource = StartNewTask();
+                //Get threadparameter
                 ICloneable param = GetParameter(ThreadName);
-                ThreadContext threadContext = new ThreadContext(ThreadName, LoggerHelper.log, tokenSource, param);
+                //Get context for to execute thread
+                ThreadContext threadContext = new ThreadContext(ThreadName, tokenSource, param);
+                //Thread  running
                 task = threadContext.ThreadRun();
+                // wait thread is over
                 rtn = await task;
                 
             }
@@ -81,6 +103,7 @@ namespace PINs
             }
             finally
             {
+                //Set buttons enabled from disabled to enabled.
                 this.SetButtonStatus(ThreadName, true);
                 dt2 = System.DateTime.Now;
                 if (SystemConfiguration.Debug) {
@@ -89,7 +112,11 @@ namespace PINs
             }
             return rtn;
         }
-       
+        /// <summary>
+        /// get parameter
+        /// </summary>
+        /// <param name="ThreadName"></param>
+        /// <returns></returns>
         private ICloneable GetParameter(PINThreadName ThreadName)
         {
             ICloneable param = null;
@@ -114,6 +141,7 @@ namespace PINs
         }
         private DigitInitialParameter GetDigitInitialParameter()
         {
+            //Delegate function for show the quantity after get a new PIN
             DigitInitialParameter param = new DigitInitialParameter();
             param.SetRefreshQuantityFunction(this.RefreshQuantity);
             return param;
@@ -131,11 +159,20 @@ namespace PINs
             this.btnGetNumber.Enabled = isEnabled;
             
         }
+        /// <summary>
+        /// Set buttons are enabled or not.
+        /// </summary>
+        /// <param name="isEnabled">true:Button are enabled; false: buttons are disenabled.</param>
         private void SetDigitInitialButtonStatus(bool isEnabled)
         {
             this.btnCheckPIN.Enabled = isEnabled;
+            SetGetNumberButtonStatus(isEnabled);
 
         }
+        /// <summary>
+        /// Set buttons are enabled or not.
+        /// </summary>
+        /// <param name="isEnabled">true:Button are enabled; false: buttons are disenabled.</param>
         private void SetButtonStatus(PINThreadName ThreadName, bool flag)
         {
             switch (ThreadName)
@@ -152,33 +189,42 @@ namespace PINs
         }
         #endregion End Button Status controll
 
+        /// <summary>
+        /// Get number
+        /// </summary>
         private async void BtnGetNumber_Click(object sender, EventArgs e)
         {
+            //Initial Digit Set
             if (!DigitSet.DigitSetStatus)
             {
                 await RunThread(PINThreadName.DigitInitial);
             }
+            //Execute async thread
             int randomDigtit = await RunThread(PINThreadName.GetNumber);
-            if (randomDigtit >= SystemConfiguration.MinDigit) { 
+            if (randomDigtit >= SystemConfiguration.MinDigit) {
+                //get a valid PIN
                 this.txtNumber.Text = randomDigtit.ToString();
                 RefreshQuantity();
             }
             else
             {
                 //Digit run out
-                if(System.Windows.Forms.MessageBox.Show("All of digits have been used. Do you want to rebuild unused digits?\r\n\r\nIf you click \"Yes\", then program will create the same new unused digits' set as the beginning.\r\nIf you click \"No\" ,do nothing."
+                if(System.Windows.Forms.MessageBox.Show("All of the digits have been used. Do you want to reuse the preceding digits?\r\n\r\nIf you click \"Yes\", all of the used digits will be cleared , then the digits can be used again.\r\nIf you click \"No\" ,nothing will happen."
                     ,"Infomation"
                     , MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    System.IO.File.Delete(SystemConfiguration.ExceptionDigitFileName);
-                    System.IO.File.Delete(SystemConfiguration.UnusedDigitFileName);
-                    System.IO.File.Delete(SystemConfiguration.UsedDigitFileName);
+                    DigitSet.ExceptionSet.Clear(SystemConfiguration.ExceptionDigitFileName);
+                    DigitSet.UnusedSet.Clear(SystemConfiguration.UnusedDigitFileName);
+                    DigitSet.UsedSet.Clear(SystemConfiguration.UsedDigitFileName);
                     DigitSet.SetReInitial();
                     this.BtnGetNumber_Click(sender, e);
                 }
             }
 
         }
+        /// <summary>
+        /// Update quantity
+        /// </summary>
         private void RefreshQuantity()
         {
             if (this.lbUsedPINQuantity.InvokeRequired)
@@ -187,22 +233,15 @@ namespace PINs
             }
             else
             {
-                this.lbUsedPINQuantity.Text = DigitSet.UsedHash.Length.ToString();
+                this.lbUsedPINQuantity.Text = DigitSet.UsedSet.Length.ToString();
             }
         }
 
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            //for(int i = 1; i <= 9995; i++)
-            //{
-            //    this.BtnGetNumber_Click(null, null);
-
-            //}
-            SaveDataToFile<int> x = new SaveDataToFile<int>();
-            LoggerHelper.Info(x.GetType().ToString());
-
-        }
-
+        /// <summary>
+        /// Call CheckPIN
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void BtnCheckPIN_Click(object sender, EventArgs e)
         {
             if (!DigitSet.DigitSetStatus)
@@ -211,6 +250,7 @@ namespace PINs
             }
             CheckPIN(txtCheckPIN.Text.Trim());
         }
+        //Check if a PIN is valid and has been used
         private void CheckPIN(string text)
         {
             int digit = 0;
@@ -223,7 +263,7 @@ namespace PINs
                 LoggerHelper.Warn("[" + text + "] is not a valid integer \r\n");
                 return;
             }
-            if (DigitSet.UsedHash.Contains(digit))
+            if (DigitSet.UsedSet.Contains(digit))
             {
                 LoggerHelper.Info("[" + text + "] is a valid digit and has been used.\r\n");
             }
@@ -243,110 +283,4 @@ namespace PINs
         }
     }
 }
-
-
-//int num = 9999999 + 1;
-//DateTime dt1, dt2;
-//dt1 = System.DateTime.Now;
-//            this.log.Info("Create array :quantity=" + num.ToString() + "\r\n");
-//            int[]
-//ArrayUnused = new int[num];
-//            dt2 = System.DateTime.Now;
-//            this.log.Info("Create array :quantity=" + (dt2-dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("Traverse array begin..." + num.ToString() + "\r\n");
-//            for (int i=0; i<num; i++){
-//    ArrayUnused[i] = 0;
-//}
-//dt2 = System.DateTime.Now;
-//            this.log.Info("Traverse array end" + (dt2 - dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("create HashObject begin..." + num.ToString() + "\r\n");
-//PINHash hash = new PINHash(this.log);
-//            for (int i = 0; i<num; i++)
-//            {
-//                hash.Insert(i);
-//            }
-//            dt2 = System.DateTime.Now;
-//            this.log.Info("create HashObject end" + (dt2 - dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("Traverse HashObject begin..." + num.ToString() + "\r\n");
-//            foreach (var item in hash.Hash)
-//            {
-//    //
-//}
-//dt2 = System.DateTime.Now;
-//            this.log.Info("Traverse HashObject end" + (dt2 - dt1).ToString("") + "\r\n");
-
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("Create RedBlackTree begin..." + num.ToString() + "\r\n");
-//RedBlackTree btree = new RedBlackTree(this.log);
-//            for (int i = 0; i<num; i++)
-//            {
-//                btree.Insert(i);
-//            }
-//            dt2 = System.DateTime.Now;
-//            this.log.Info("Create RedBlackTree end" + (dt2 - dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("Traverse RedBlackTree begin..." + num.ToString() + "\r\n");
-//            foreach (var item in btree.RBTree)
-//            {
-//    //
-//}
-//dt2 = System.DateTime.Now;
-//            this.log.Info("Traverse RedBlackTree end" + (dt2 - dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("Search Time: HashObject begin..." + (num-1).ToString() + "\r\n");
-//hash.Contains(num-1);
-//dt2 = System.DateTime.Now;
-//            this.log.Info("Search Time: HashObject end" + (dt2 - dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("Search Time: RedBlackTreeObject begin..." + (num-1).ToString() + "\r\n");
-//btree.Contains(num-1);
-//dt2 = System.DateTime.Now;
-//            this.log.Info("Search Time: RedBlackTreeObject end" + (dt2 - dt1).ToString("") + "\r\n");
-
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("GetValueByIndex: HashObject begin..." + (num - 1).ToString() + "\r\n");
-//hash.GetValue(num - 1);
-//dt2 = System.DateTime.Now;
-//            this.log.Info("GetValueByIndex: HashObject end" + (dt2 - dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("GetValueByIndex: RedBlackTreeObject begin..." + (num - 1).ToString() + "\r\n");
-//btree.GetValue(num - 1);
-//dt2 = System.DateTime.Now;
-//            this.log.Info("GetValueByIndex: RedBlackTreeObject end" + (dt2 - dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("SaveToFile: HashObject begin..." + (num - 1).ToString() + "\r\n");
-//hash.SaveToFile(@"c:/test/hash.txt");
-//dt2 = System.DateTime.Now;
-//            this.log.Info("SaveToFile: HashObject end" + (dt2 - dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("SaveToFile: RedBlackTreeObject begin..." + (num - 1).ToString() + "\r\n");
-//btree.SaveToFile(@"c:/test/btree.txt");
-//dt2 = System.DateTime.Now;
-//            this.log.Info("SaveToFile: RedBlackTreeObject end" + (dt2 - dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("OpenFromFile: HashObject begin..." + (num - 1).ToString() + "\r\n");
-//hash.OpenFromFile(@"c:/test/hash.txt");
-//dt2 = System.DateTime.Now;
-//            this.log.Info("OpenFromFile: HashObject end" + (dt2 - dt1).ToString("") + "\r\n");
-
-//dt1 = System.DateTime.Now;
-//            this.log.Info("OpenFromFile: RedBlackTreeObject begin..." + (num - 1).ToString() + "\r\n");
-//btree.OpenFromFile(@"c:/test/btree.txt");
-//dt2 = System.DateTime.Now;
-//            this.log.Info("OpenFromFile: RedBlackTreeObject end" + (dt2 - dt1).ToString("") + "\r\n");
 

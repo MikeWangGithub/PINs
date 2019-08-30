@@ -4,23 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using PINs.Tools;
+using PINs.GlobalData;
 
 namespace PINs.Tools
 {
+    /// <summary>
+    /// Load digit data from physical file
+    /// </summary>
     public class LoadDataFromFile : ILoadData
     {
-        private AlgorithmType objType;
-        private Object LoadObj;
-        public void SetLoadObject(HashSet<int> obj)
+        private ISet<int> LoadObj;
+        public void SetLoadObject(ISet<int> obj)
         {
-            objType = AlgorithmType.HashSet;
             LoadObj = obj;
         }
-        public void SetLoadObject(SortedSet<int> obj)
-        {
-            objType = AlgorithmType.RedBlackTree;
-            LoadObj = obj;
-        }
+        /// <summary>
+        /// Open a physical file and read string 
+        /// Convert string to Integer and insert to DigitSet
+        /// </summary>
+        /// <param name="FileName"></param>
+        /// <returns></returns>
         public bool Load(string FileName)
         {
             bool rtn;
@@ -28,46 +32,22 @@ namespace PINs.Tools
             {
                 StreamReader sr = new StreamReader(FileName, Encoding.UTF8);
                 string s;
-                switch (objType)
-                {
-                    case AlgorithmType.HashSet:
-                        ((HashSet<int>)LoadObj).Clear();
-                        break;
-                    case AlgorithmType.RedBlackTree:
-                        ((SortedSet<int>)LoadObj).Clear();
-                        break;
-                    default:
-                        break;
-                }
-                
+                //Clear preceding digit.
+                LoadObj.Clear();
                 while ((s = sr.ReadLine()) != null)
                 {
                     try
                     {
-
                         int item = System.Convert.ToInt32(s);
-
-                        switch (objType)
-                        {
-                            case AlgorithmType.HashSet:
-                                ((HashSet<int>)LoadObj).Add(item);
-                                break;
-                            case AlgorithmType.RedBlackTree:
-                                ((SortedSet<int>)LoadObj).Add(item);
-                                break;
-                            default:
-                                break;
-                        }
+                        LoadObj.Add(item);
                     }
                     catch
                     {
                         //Throw away non-digital string
                     }
-
                 }
                 sr.Close();
                 rtn = true;
-            
             }
             catch (Exception ex)
             {

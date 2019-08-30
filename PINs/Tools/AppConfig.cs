@@ -26,6 +26,13 @@ namespace PINs.Tools
             }
             return "";
         }
+        /// <summary>
+        /// Save value to Config File
+        /// </summary>
+        /// <param name="AppPath"></param>
+        /// <param name="strKey"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static bool SaveAppConfig(string AppPath, string strKey, string value)
         {
             bool rtn = true;

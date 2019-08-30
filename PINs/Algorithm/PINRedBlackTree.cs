@@ -12,8 +12,12 @@ namespace PINs.Algorithm
     /// <summary>
     /// encapsulate RedBlackTree Class, include various implementation of insert,delete...
     /// </summary>
-    public class PINRedBlackTree: IBinaryTree<int>
+    public class PINRedBlackTree : ISet<int>
     {
+        private object Lockobject = new object();
+        private ISaveData<int> SaveObject;
+        private ILoadData LoadObject;
+        private IClearData ClearObject;
         /// <summary>
         /// .Net SortedSet Object. Only be operated by class self.
         /// </summary>
@@ -22,7 +26,7 @@ namespace PINs.Algorithm
         /// <summary>
         /// ReadOnly Property, for exampel :foreach (var item in Items) 
         /// </summary>
-        public System.Collections.Generic.SortedSet<int> Items { get { return RBTree; } }
+        public IEnumerable<int> Items { get { return RBTree; } }
         /// <summary>
         /// encapsulate log class
         /// </summary>
@@ -41,7 +45,7 @@ namespace PINs.Algorithm
         public PINRedBlackTree(ILog log)
         {
             RBTree = new SortedSet<int>();
-            
+
         }
         /// <summary>
         /// Get Node's value by Index
@@ -72,20 +76,21 @@ namespace PINs.Algorithm
         public bool Insert(int t)
         {
             bool rtn = true;
-            try {
+            try
+            {
                 RBTree.Add(t);
             }
             catch (Exception ex)
             {
                 rtn = false;
-                
+
             }
             finally
             {
-                
+
             }
             return rtn;
-            
+
         }
         /// <summary>
         /// delete a node(a PIN） from tree
@@ -94,7 +99,7 @@ namespace PINs.Algorithm
         /// <returns>Operation is sucessful,return true otherwise false</returns>
         public bool Delete(int t)
         {
-            
+
             bool rtn = true;
             try
             {
@@ -109,7 +114,7 @@ namespace PINs.Algorithm
 
             }
             return rtn;
-            
+
         }
         /// <summary>
         /// Judge RedBlackTree include a PIN
@@ -125,24 +130,18 @@ namespace PINs.Algorithm
         /// </summary>
         /// <param name="FileName">filename which include fullpath</param>
         /// <returns>Operation is sucessful,return true otherwise false</returns>
-        public bool SaveToFile(string FileName)
+        public bool Save(string FileName)
         {
-            bool rtn;
-            try {
-                //overwrite the file
-                StreamWriter sw = new StreamWriter(FileName, false ,Encoding.UTF8);
-                foreach (int item in RBTree)
-                {
-                    sw.WriteLine(item);
-                }
-                sw.Close();
-                rtn = true;
-            }
-            catch(Exception ex)
+            lock (Lockobject)
             {
-                rtn = false;
+                SaveObject = ObjectBuildFactory<ISaveData<int>>.Instance(SystemConfiguration.SaveDataClassName);
+                if (SaveObject != null)
+                    SaveObject.SetSaveObject(RBTree);
             }
-            return rtn;
+            if (SaveObject != null)
+                return SaveObject.Save(FileName);
+            else
+                return false;
 
         }
         /// <summary>
@@ -150,42 +149,37 @@ namespace PINs.Algorithm
         /// </summary>
         /// <param name="FileName">filename which include fullpath</param>
         /// <returns>Operation is sucessful,return true otherwise false</returns>
-        public bool OpenFromFile(string FileName)
+        public bool Load(string FileName)
         {
-           
-            bool rtn;
-            try
+            lock (Lockobject)
             {
-                StreamReader sr = new StreamReader(FileName, Encoding.UTF8);
-                string s ;
-                Clear();
-                while ((s = sr.ReadLine()) != null)
-                {
-                    try
-                    {
-                        int item = System.Convert.ToInt32(s);
-                        Insert(item);
-                    }
-                    catch
-                    {
-                        //Throw away non-digital string
-                    }
-
-                }
-                sr.Close();
-                rtn = true;
+                LoadObject = ObjectBuildFactory<ILoadData>.Instance(SystemConfiguration.LoadDataClassName);
+                if (LoadObject != null)
+                    LoadObject.SetLoadObject(RBTree);
             }
-            catch (Exception ex)
-            {
-                rtn = false;
-            }
-            return rtn;
-
-            
+            if (LoadObject != null)
+                return LoadObject.Load(FileName);
+            else
+                return false;
         }
-
-
-
-
+        /// <summary>
+        /// Clear all digits
+        /// </summary>
+        /// <param name="FileName"></param>
+        public void Clear(string FileName)
+        {
+            Clear();
+            lock (Lockobject)
+            {
+                ClearObject = ObjectBuildFactory<IClearData>.Instance(SystemConfiguration.ClearDataClassName);
+                if (ClearObject != null)
+                    ClearObject.SetClearObject(RBTree);
+            }
+            if (ClearObject != null)
+            {
+                ClearObject.Clear(FileName);
+            }
+        }
     }
+    
 }

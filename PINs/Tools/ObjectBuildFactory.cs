@@ -6,8 +6,17 @@ using System.Threading.Tasks;
 
 namespace PINs.Tools
 {
+    /// <summary>
+    /// DIP Class
+    /// </summary>
+    /// <typeparam name="T">generic class</typeparam>
     public class ObjectBuildFactory<T>
     {
+        /// <summary>
+        /// Create concrete class by ClassName
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static T Instance(string key)
         {
             Type obj = Type.GetType(key);

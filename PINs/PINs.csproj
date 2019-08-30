@@ -62,8 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algorithm\IHash.cs" />
-    <Compile Include="Algorithm\IBinaryTree.cs" />
+    <Compile Include="Algorithm\ISet.cs" />
     <Compile Include="Algorithm\PINHash.cs" />
     <Compile Include="Algorithm\PINRandom.cs" />
     <Compile Include="Algorithm\PINRedBlackTree.cs" />
@@ -85,8 +84,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\ClearDataFromFile.cs" />
     <Compile Include="Tools\ConsoleLogger.cs" />
     <Compile Include="Tools\DelegateClass.cs" />
+    <Compile Include="Tools\IClearData.cs" />
     <Compile Include="Tools\ILoadData.cs" />
     <Compile Include="Tools\ILog.cs" />
     <Compile Include="Tools\ISaveData.cs" />

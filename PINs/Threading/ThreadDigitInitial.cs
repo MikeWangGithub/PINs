@@ -10,10 +10,14 @@ using PINs.GlobalData;
 
 namespace PINs.Threading
 {
+    /// <summary>
+    /// Thread for initial 3 Set
+    /// </summary>
     public class ThreadDigitInitial: PINThread
     {
+        //
         private DigitInitialParameter param;
-        public ThreadDigitInitial(ILog _log, CancellationTokenSource _tokenSource, ICloneable _threadParameter) : base(_log, _tokenSource, _threadParameter)
+        public ThreadDigitInitial( CancellationTokenSource _tokenSource, ICloneable _threadParameter) : base( _tokenSource, _threadParameter)
         {
             if (this.ThreadParameter != null)
             {
@@ -24,14 +28,20 @@ namespace PINs.Threading
                 param = null;
             }
         }
-
+        /// <summary>
+        /// don't need to check anything
+        /// </summary>
+        /// <returns></returns>
         public override bool CheckParameter()
         {
             
             return true;
         }
 
-
+        /// <summary>
+        /// Execute Initial Function and Refresh quantity on the Mainform.
+        /// </summary>
+        /// <returns>it is not important</returns>
         public override int RunSubThread()
         {
             //judage if threading is cancelled.
@@ -41,7 +51,9 @@ namespace PINs.Threading
             return 0;
         }
 
-
+        /// <summary>
+        /// print log
+        /// </summary>
         public override void DoSomethingBeforeRunSub()
         {
             base.DoSomethingBeforeRunSub();
@@ -49,16 +61,23 @@ namespace PINs.Threading
             
 
         }
+        /// <summary>
+        /// print log
+        /// </summary>
         public override void DoSomethingAfterRunSub()
         {
             base.DoSomethingAfterRunSub();
             Debug(this.GetType().ToString() + " threading finished.\r\n");
         }
+        /// <summary>
+        /// encapsulate Log.debug
+        /// </summary>
+        /// <param name="DebugText"></param>
         private void Debug(string DebugText)
         {
             if (SystemConfiguration.Debug)
             {
-                log.Debug(DebugText);
+                LoggerHelper.Debug(DebugText);
             }
         }
         

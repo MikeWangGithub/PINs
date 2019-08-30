@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace PINs.Tools
 {
+    /// <summary>
+    /// interface log
+    /// can be implemented to different concrete log class, physical File, showing , database ,XML file ....
+    /// </summary>
     public interface ILog
     {
         void Info(string infoText);

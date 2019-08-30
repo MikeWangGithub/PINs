@@ -30,23 +30,22 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
-            this.txtLog = new System.Windows.Forms.RichTextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtNumber = new System.Windows.Forms.TextBox();
             this.btnGetNumber = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.lbUsedPINQuantity = new System.Windows.Forms.Label();
-            this.toolTipCheckPIN = new System.Windows.Forms.ToolTip(this.components);
-            this.btnCheckPIN = new System.Windows.Forms.Button();
             this.txtCheckPIN = new System.Windows.Forms.TextBox();
+            this.btnCheckPIN = new System.Windows.Forms.Button();
+            this.lbUsedPINQuantity = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.txtLog = new System.Windows.Forms.RichTextBox();
+            this.toolTipCheckPIN = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
-            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -58,38 +57,6 @@
             this.groupBox1.Size = new System.Drawing.Size(1094, 166);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.button1);
-            this.panel1.Controls.Add(this.txtLog);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 166);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1094, 523);
-            this.panel1.TabIndex = 3;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(457, 95);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
-            // 
-            // txtLog
-            // 
-            this.txtLog.BackColor = System.Drawing.Color.Black;
-            this.txtLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtLog.ForeColor = System.Drawing.Color.White;
-            this.txtLog.Location = new System.Drawing.Point(0, 0);
-            this.txtLog.Name = "txtLog";
-            this.txtLog.ReadOnly = true;
-            this.txtLog.Size = new System.Drawing.Size(1094, 523);
-            this.txtLog.TabIndex = 0;
-            this.txtLog.Text = "";
             // 
             // splitContainer1
             // 
@@ -133,36 +100,22 @@
             this.btnGetNumber.UseVisualStyleBackColor = true;
             this.btnGetNumber.Click += new System.EventHandler(this.BtnGetNumber_Click);
             // 
-            // label1
+            // txtCheckPIN
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("宋体", 15.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(17, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(262, 21);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Quantity of used PINs";
-            // 
-            // lbUsedPINQuantity
-            // 
-            this.lbUsedPINQuantity.AutoSize = true;
-            this.lbUsedPINQuantity.Font = new System.Drawing.Font("宋体", 15.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lbUsedPINQuantity.ForeColor = System.Drawing.Color.Fuchsia;
-            this.lbUsedPINQuantity.Location = new System.Drawing.Point(285, 20);
-            this.lbUsedPINQuantity.Name = "lbUsedPINQuantity";
-            this.lbUsedPINQuantity.Size = new System.Drawing.Size(0, 21);
-            this.lbUsedPINQuantity.TabIndex = 1;
-            // 
-            // toolTipCheckPIN
-            // 
-            this.toolTipCheckPIN.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.txtCheckPIN.BackColor = System.Drawing.SystemColors.Info;
+            this.txtCheckPIN.Font = new System.Drawing.Font("微软雅黑", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtCheckPIN.Location = new System.Drawing.Point(21, 80);
+            this.txtCheckPIN.Name = "txtCheckPIN";
+            this.txtCheckPIN.Size = new System.Drawing.Size(264, 35);
+            this.txtCheckPIN.TabIndex = 6;
+            this.txtCheckPIN.Text = "2222";
             // 
             // btnCheckPIN
             // 
             this.btnCheckPIN.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnCheckPIN.Location = new System.Drawing.Point(289, 80);
+            this.btnCheckPIN.Location = new System.Drawing.Point(291, 80);
             this.btnCheckPIN.Name = "btnCheckPIN";
-            this.btnCheckPIN.Size = new System.Drawing.Size(170, 35);
+            this.btnCheckPIN.Size = new System.Drawing.Size(157, 35);
             this.btnCheckPIN.TabIndex = 3;
             this.btnCheckPIN.Text = "Check a PIN";
             this.toolTipCheckPIN.SetToolTip(this.btnCheckPIN, "1. Input a PIN.\r\n2. Show this PIN has been used or not.\r\n3. Show this PIN is a va" +
@@ -170,15 +123,51 @@
             this.btnCheckPIN.UseVisualStyleBackColor = true;
             this.btnCheckPIN.Click += new System.EventHandler(this.BtnCheckPIN_Click);
             // 
-            // txtCheckPIN
+            // lbUsedPINQuantity
             // 
-            this.txtCheckPIN.BackColor = System.Drawing.SystemColors.Info;
-            this.txtCheckPIN.Font = new System.Drawing.Font("微软雅黑", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.txtCheckPIN.Location = new System.Drawing.Point(21, 80);
-            this.txtCheckPIN.Name = "txtCheckPIN";
-            this.txtCheckPIN.Size = new System.Drawing.Size(258, 35);
-            this.txtCheckPIN.TabIndex = 6;
-            this.txtCheckPIN.Text = "2222";
+            this.lbUsedPINQuantity.AutoSize = true;
+            this.lbUsedPINQuantity.Font = new System.Drawing.Font("宋体", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lbUsedPINQuantity.ForeColor = System.Drawing.Color.Fuchsia;
+            this.lbUsedPINQuantity.Location = new System.Drawing.Point(298, 29);
+            this.lbUsedPINQuantity.Name = "lbUsedPINQuantity";
+            this.lbUsedPINQuantity.Size = new System.Drawing.Size(130, 21);
+            this.lbUsedPINQuantity.TabIndex = 1;
+            this.lbUsedPINQuantity.Text = "          ";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("宋体", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label1.Location = new System.Drawing.Point(17, 29);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(274, 21);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Quantity of used PINs:";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.txtLog);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 166);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1094, 523);
+            this.panel1.TabIndex = 3;
+            // 
+            // txtLog
+            // 
+            this.txtLog.BackColor = System.Drawing.Color.Black;
+            this.txtLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtLog.ForeColor = System.Drawing.Color.White;
+            this.txtLog.Location = new System.Drawing.Point(0, 0);
+            this.txtLog.Name = "txtLog";
+            this.txtLog.ReadOnly = true;
+            this.txtLog.Size = new System.Drawing.Size(1094, 523);
+            this.txtLog.TabIndex = 0;
+            this.txtLog.Text = "";
+            // 
+            // toolTipCheckPIN
+            // 
+            this.toolTipCheckPIN.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             // 
             // MainForm
             // 
@@ -188,16 +177,16 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PINs";
             this.groupBox1.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -207,7 +196,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.RichTextBox txtLog;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox txtNumber;
         private System.Windows.Forms.Button btnGetNumber;

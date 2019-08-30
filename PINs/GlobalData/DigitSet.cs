@@ -1,28 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PINs.Algorithm;
 using System.IO;
+using System.Collections.Generic;
+using PINs.Tools;
+
 
 namespace PINs.GlobalData
 {
+    /// <summary>
+    /// Manage 3 Digit Set
+    /// </summary>
     public static class DigitSet
     {
-        private static PINHash _UsedHash;
-        private static PINHash _UnusedHash;
-        private static PINHash _ExceptionHash;
+        /// <summary>
+        /// The Set of used PINs
+        /// </summary>
+        private static PINs.Algorithm.ISet<int> _UsedSet;
+        /// <summary>
+        /// Set of unused PINs
+        /// </summary>
+        private static PINs.Algorithm.ISet<int> _UnusedSet;
+        /// <summary>
+        /// Set of Exception PINs
+        /// </summary>
+        private static PINs.Algorithm.ISet<int> _ExceptionSet;
+        /// <summary>
+        /// Record if _UsedSet has been initial. true : initial ; false: not initial
+        /// </summary>
+        private static bool UsedSetStatus;
+        /// <summary>
+        /// Record if _UnusedSet has been initial. true : initial ; false: not initial
+        /// </summary>
+        private static bool UnusedSetStatus;
+        /// <summary>
+        /// Record if _ExceptionSet has been initial. true : initial ; false: not initial
+        /// </summary>
+        private static bool ExceptionSetStatus;
 
-        private static bool UsedHashStatus;
-        private static bool UnusedHashStatus;
-        private static bool ExceptionHashtatus;
-
+        /// <summary>
+        /// All Sets' Status
+        /// </summary>
         public static bool DigitSetStatus
         {
             get
             {
-                if (UsedHashStatus && UnusedHashStatus && ExceptionHashtatus)
+                if (UsedSetStatus && UnusedSetStatus && ExceptionSetStatus)
                     return true;
                 else
                     return false;
@@ -31,324 +56,177 @@ namespace PINs.GlobalData
 
         static DigitSet()
         {
-            UsedHashStatus = false;
-            UnusedHashStatus = false;
-            ExceptionHashtatus = false;
+            UsedSetStatus = false;
+            UnusedSetStatus = false;
+            ExceptionSetStatus = false;
         }
-        public static PINHash UsedHash { get { return _UsedHash; } }
-        public static PINHash UnusedHash { get { return _UnusedHash; } }
-        public static PINHash ExceptionHash { get { return _ExceptionHash; } }
+        /// <summary>
+        /// Used digit Set. ReadOnly
+        /// </summary>
+        public static PINs.Algorithm.ISet<int> UsedSet { get { return _UsedSet; } }
+        /// <summary>
+        /// Unused digit Set. ReadOnly
+        /// </summary>
+        public static PINs.Algorithm.ISet<int> UnusedSet { get { return _UnusedSet; } }
+        /// <summary>
+        /// Exception digit Set. ReadOnly
+        /// </summary>
+        public static PINs.Algorithm.ISet<int> ExceptionSet { get { return _ExceptionSet; } }
+        /// <summary>
+        /// Lock object - UsedSet
+        /// </summary>
+        private static object LockUsedSet = new object();
+        /// <summary>
+        /// Lock object - UnusedSet
+        /// </summary>
+        private static object LockUnusedSet = new object();
+        /// <summary>
+        /// Lock object - ExceptionSet
+        /// </summary>
+        private static object LockExceptionSet = new object();
 
-        private static object LockUsedHash = new object();
-        private static object LockUnusedHash = new object();
-        private static object LockExceptionHash = new object();
-   
-
+        /// <summary>
+        /// Initial again when all of the digits have been used.
+        /// </summary>
         public static void SetReInitial()
         {
-            lock (LockUnusedHash)
+            // Set 3 status to false
+            lock (LockUnusedSet)
             {
-                UnusedHashStatus = false;
+                UnusedSetStatus = false;
             }
-            lock (LockUsedHash)
+            lock (LockUsedSet)
             {
-                UsedHashStatus = false;  
+                UsedSetStatus = false;
             }
-            lock (LockExceptionHash)
+            lock (LockExceptionSet)
             {
-                ExceptionHashtatus = false; 
+                ExceptionSetStatus = false;
             }
-            lock (LockUsedHash)
+            // Clear nodes of 3 Sets 
+            lock (LockUsedSet)
             {
-                if (_UsedHash == null)
-                    _UsedHash = new PINHash();
+                if (_UsedSet == null)
+                    _UsedSet = ObjectBuildFactory<PINs.Algorithm.ISet<int>>.Instance(SystemConfiguration.AlgorithmClassName);
                 else
-                    _UsedHash.Clear();
+                    _UsedSet.Clear(SystemConfiguration.UsedDigitFileName);
             }
-            lock (LockUnusedHash)
+            lock (LockUnusedSet)
             {
-                if (_UnusedHash == null)
-                    _UnusedHash = new PINHash();
+                if (_UnusedSet == null)
+                    _UnusedSet = ObjectBuildFactory<PINs.Algorithm.ISet<int>>.Instance(SystemConfiguration.AlgorithmClassName);
                 else
-                    _UnusedHash.Clear();
+                    _UnusedSet.Clear(SystemConfiguration.UnusedDigitFileName);
             }
-            lock (LockExceptionHash)
+            lock (LockExceptionSet)
             {
-                if (_ExceptionHash == null)
-                    _ExceptionHash = new PINHash();
+                if (_ExceptionSet == null)
+                    _ExceptionSet = ObjectBuildFactory<PINs.Algorithm.ISet<int>>.Instance(SystemConfiguration.AlgorithmClassName);
                 else
-                    _ExceptionHash.Clear();
+                    _ExceptionSet.Clear(SystemConfiguration.ExceptionDigitFileName);
             }
         }
         /// <summary>
-        /// Initial 3 PINHash
+        /// Initial 3 Set
         /// </summary>
         public static void Initial()
         {
-            lock (LockUsedHash)
+            //create 3 Set Objects by DIP,dynamic create class 
+            lock (LockUsedSet)
             {
-                if(_UsedHash == null)
-                    _UsedHash = new PINHash();
+                if (_UsedSet == null)
+                    _UsedSet = ObjectBuildFactory<PINs.Algorithm.ISet<int>>.Instance(SystemConfiguration.AlgorithmClassName);
             }
-            lock (LockUnusedHash) { 
-                if(_UnusedHash == null)
-                    _UnusedHash = new PINHash();
+            lock (LockUnusedSet)
+            {
+                if (_UnusedSet == null)
+                    _UnusedSet = ObjectBuildFactory<PINs.Algorithm.ISet<int>>.Instance(SystemConfiguration.AlgorithmClassName);
             }
-            lock (LockExceptionHash) { 
-                if (_ExceptionHash == null)
-                    _ExceptionHash = new PINHash();
+            lock (LockExceptionSet)
+            {
+                if (_ExceptionSet == null)
+                    _ExceptionSet = ObjectBuildFactory<PINs.Algorithm.ISet<int>>.Instance(SystemConfiguration.AlgorithmClassName);
             }
-
+            //Juage: if 1st execute this program
             if (!SystemConfiguration.IsExistsExceptionDigitFile() ||
                 !SystemConfiguration.IsExistsUnusedDigitFile() ||
                 !SystemConfiguration.IsExistsUsedDigitFile()
 
                 )
             {
-                //generated 3 binary tree files
+                //1st time execute this program
+                //generated 3 Set
                 //......
                 Debug("prepare unused set ...\r\n");
                 for (int i = SystemConfiguration.MinDigit; i <= SystemConfiguration.MaxDigit; i++)
                 {
-                    lock (LockExceptionHash)
+                    lock (LockExceptionSet)
                     {
-                        _UnusedHash.Insert(i);
+                        _UnusedSet.Insert(i);
                     }
                 }
                 Debug("Unused set is OK ...\r\n");
-                lock (LockUnusedHash)
+                lock (LockUnusedSet)
                 {
-                    UnusedHashStatus = true;
+                    UnusedSetStatus = true;
                 }
-                lock (LockUsedHash) { 
-                    UsedHashStatus = true;  //UsedHash contains 0 data.
-                }
-                lock (LockExceptionHash)
+                lock (LockUsedSet)
                 {
-                    ExceptionHashtatus = true; //ExceptionHash contains 0 data.
+                    UsedSetStatus = true;  //UsedSet contains 0 data.
+                }
+                lock (LockExceptionSet)
+                {
+                    ExceptionSetStatus = true; //ExceptionSet contains 0 data.
                 }
                 Debug("All of digit Set is OK ...\r\n");
-                LoggerHelper.Info("Digit Set is prepared.\r\n");
+                LoggerHelper.Info("Digits' Set is prepared.\r\n");
 
-                try
-                {
-                    StreamWriter sw = new StreamWriter(SystemConfiguration.UnusedDigitFileName, false, Encoding.UTF8);
-                    foreach (int item in _UnusedHash.Items)
-                    {
-                        sw.WriteLine(item);
-                    }
-                    sw.Close();
-                    //rtn = true;
-                }
-                catch (Exception ex)
-                {
-                    //rtn = false;
-                }
+                //Save node to somewhere, now they are physical files.
+                _UnusedSet.Save(SystemConfiguration.UnusedDigitFileName);
                 Debug("Unused set is saved  to file...\r\n");
-                _ExceptionHash.SaveToFile(SystemConfiguration.ExceptionDigitFileName);
+                _ExceptionSet.Save(SystemConfiguration.ExceptionDigitFileName);
                 Debug("exception set is saved to file...\r\n");
-                _UsedHash.SaveToFile(SystemConfiguration.UsedDigitFileName);
+                _UsedSet.Save(SystemConfiguration.UsedDigitFileName);
                 Debug("used set is saved to file...\r\n");
 
             }
-            else {
-                if((UsedHashStatus==false) && (UnusedHashStatus==false) && (ExceptionHashtatus == false)) { 
-                    _ExceptionHash.OpenFromFile(SystemConfiguration.ExceptionDigitFileName);
-                    lock (LockExceptionHash)
+            else
+            {
+                //not first execute this program
+                if ((UsedSetStatus == false) && (UnusedSetStatus == false) && (ExceptionSetStatus == false))
+                {
+                    //not initial
+                    //Load data to 3 Set from somewhere ,now they are physical files.
+                    _ExceptionSet.Load(SystemConfiguration.ExceptionDigitFileName);
+                    lock (LockExceptionSet)
                     {
-                        ExceptionHashtatus = true; 
+                        ExceptionSetStatus = true;
                     }
                     Debug("excepiton set is loaded ...\r\n");
 
-                    _UsedHash.OpenFromFile(SystemConfiguration.UsedDigitFileName);
-                    lock (LockUsedHash)
+                    _UsedSet.Load(SystemConfiguration.UsedDigitFileName);
+                    lock (LockUsedSet)
                     {
-                        UsedHashStatus = true;  
+                        UsedSetStatus = true;
                     }
                     Debug("used set is loaded ...\r\n");
 
-                    _UnusedHash.OpenFromFile(SystemConfiguration.UnusedDigitFileName);
-                    lock (LockUnusedHash)
+                    _UnusedSet.Load(SystemConfiguration.UnusedDigitFileName);
+                    lock (LockUnusedSet)
                     {
-                        UnusedHashStatus = true;
+                        UnusedSetStatus = true;
                     }
                     Debug("unused set id loaded ...\r\n");
                 }
 
             }
-            
+
         }
 
         /// <summary>
-        /// UsedHash Insert a digit
+        /// encapsulate logger function
         /// </summary>
-        /// <param name="t">digit</param>
-        public static void UsedHashInsert(int t)
-        {
-            if (UsedHash == null)
-                return;
-            lock (LockUsedHash)
-            {
-                UsedHash.Insert(t);
-            }
-        }
-
-        /// <summary>
-        /// UnusedHash Insert a digit
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void UnusedHashInsert(int t)
-        {
-            if (UnusedHash == null)
-                return;
-            lock (LockUnusedHash)
-            {
-                UnusedHash.Insert(t);
-            }
-        }
-
-        /// <summary>
-        /// ExceptionHash Insert a digit
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void ExceptionHashInsert(int t)
-        {
-            if (ExceptionHash == null)
-                return;
-            lock (LockExceptionHash)
-            {
-                ExceptionHash.Insert(t);
-            }
-        }
-
-        /// <summary>
-        /// UsedHash delete a digit
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void UsedHashDelete(int t)
-        {
-            if (UsedHash == null)
-                return;
-            lock (LockUsedHash)
-            {
-                UsedHash.Delete(t);
-            }
-        }
-
-        /// <summary>
-        /// UnusedHash Delete a digit
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void UnusedHashDelete(int t)
-        {
-            if (UnusedHash == null)
-                return;
-            lock (LockUnusedHash)
-            {
-                UnusedHash.Delete(t);
-            }
-        }
-
-        /// <summary>
-        /// ExceptionHash Delete a digit
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void ExceptionHashDelete(int t)
-        {
-            if (ExceptionHash == null)
-                return;
-            lock (LockExceptionHash)
-            {
-                ExceptionHash.Delete(t);
-            }
-        }
-
-
-        /// <summary>
-        /// UsedHash Save data to a file
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void UsedHashSaveToFile(string FileName)
-        {
-            if (UsedHash == null)
-                return;
-            lock (LockUsedHash)
-            {
-                UsedHash.SaveToFile(FileName);
-            }
-        }
-
-        /// <summary>
-        /// UnusedHash Save data to a file
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void UnusedHashSaveToFile(string FileName)
-        {
-            if (UnusedHash == null)
-                return;
-            lock (LockUnusedHash)
-            {
-                UnusedHash.SaveToFile(FileName);
-            }
-        }
-
-        /// <summary>
-        /// ExceptionHash  Save data to a file
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void ExceptionHashSaveToFile(string FileName)
-        {
-            if (ExceptionHash == null)
-                return;
-            lock (LockExceptionHash)
-            {
-                ExceptionHash.SaveToFile(FileName);
-            }
-        }
-
-
-        /// <summary>
-        /// UsedHash open data from a file
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void UsedHashOpenFromFile(string FileName)
-        {
-            if (UsedHash == null)
-                return;
-            lock (LockUsedHash)
-            {
-                UsedHash.OpenFromFile(FileName);
-            }
-        }
-
-        /// <summary>
-        /// UnusedHash open data from a file
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void UnusedHashOpenFromFile(string FileName)
-        {
-            if (UnusedHash == null)
-                return;
-            lock (LockUnusedHash)
-            {
-                UnusedHash.OpenFromFile(FileName);
-            }
-        }
-
-        /// <summary>
-        /// ExceptionHash  open data from a file
-        /// </summary>
-        /// <param name="t">digit</param>
-        public static void ExceptionHashOpenFromFile(string FileName)
-        {
-            if (ExceptionHash == null)
-                return;
-            lock (LockExceptionHash)
-            {
-                ExceptionHash.OpenFromFile(FileName);
-            }
-        }
-
+        /// <param name="DebugText"></param>
         private static void Debug(string DebugText)
         {
             if (SystemConfiguration.Debug)

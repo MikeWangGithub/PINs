@@ -8,8 +8,12 @@ using PINs.Tools;
 
 namespace PINs.Tools
 {
+    /// <summary>
+    /// Concrete Log Class
+    /// </summary>
     public class ConsoleLogger : ILog
     {
+        //component which will show the information
         private  RichTextBox _richTextBox;
 
         public ConsoleLogger():base()

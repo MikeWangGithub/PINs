@@ -12,11 +12,12 @@ namespace PINs.Algorithm
     /// <summary>
     /// Hash Class, include various implementation of insert,delete...
     /// </summary>
-    public class PINHash:IHash<int>
+    public class PINHash : PINs.Algorithm.ISet<int>
     {
         private object Lockobject = new object();
         private ISaveData<int> SaveObject;
         private ILoadData LoadObject;
+        private IClearData ClearObject;
 
         /// <summary>
         /// .Net HashSet Object. Only be operated by class self.
@@ -25,7 +26,7 @@ namespace PINs.Algorithm
         /// <summary>
         /// ReadOnly Property, for exampel :foreach (var item in Items) 
         /// </summary>
-        public System.Collections.Generic.HashSet<int> Items { get { return hash; } }
+        public IEnumerable<int> Items { get { return hash; } }
         /// <summary>
         /// encapsulate log class
         /// </summary>
@@ -34,17 +35,17 @@ namespace PINs.Algorithm
         {
             LoggerHelper.Info(text);
         }
+        public PINHash()
+        {
+            hash = new HashSet<int>();
+
+        }
         /// <summary>
         /// quantity of nodes
         /// </summary>
         public int Length
         {
             get { return hash.Count<int>(); }
-        }
-        public PINHash()
-        {
-            hash = new HashSet<int>();
-           
         }
         /// <summary>
         /// Get Node's value by Index
@@ -53,7 +54,7 @@ namespace PINs.Algorithm
         /// <returns>if Index is valid ,return real value otherwise ,return -1</returns>
         public int GetValue(int Index)
         {
-            
+
             List<int> listSet = hash.ToList<int>();
             if (Index <= listSet.Count)
             {
@@ -130,25 +131,26 @@ namespace PINs.Algorithm
         /// </summary>
         /// <param name="FileName">filename which include fullpath</param>
         /// <returns>Operation is sucessful,return true otherwise false</returns>
-        public bool SaveToFile(string FileName)
+        public bool Save(string FileName)
         {
-            lock (Lockobject) { 
+            lock (Lockobject)
+            {
                 SaveObject = ObjectBuildFactory<ISaveData<int>>.Instance(SystemConfiguration.SaveDataClassName);
-                if (SaveObject!=null)
+                if (SaveObject != null)
                     SaveObject.SetSaveObject(hash);
             }
             if (SaveObject != null)
                 return SaveObject.Save(FileName);
             else
                 return false;
-           
+
         }
         /// <summary>
         /// Load PIN data from a physical file
         /// </summary>
         /// <param name="FileName">filename which include fullpath</param>
         /// <returns>Operation is sucessful,return true otherwise false</returns>
-        public bool OpenFromFile(string FileName)
+        public bool Load(string FileName)
         {
             lock (Lockobject)
             {
@@ -163,6 +165,22 @@ namespace PINs.Algorithm
 
 
         }
-
+        /// <summary>
+        /// Clear all digits
+        /// </summary>
+        /// <param name="FileName"></param>
+        public void Clear(string FileName)
+        {
+            Clear();
+            lock (Lockobject)
+            {
+                ClearObject = ObjectBuildFactory<IClearData>.Instance(SystemConfiguration.ClearDataClassName);
+                if (ClearObject != null)
+                    ClearObject.SetClearObject(hash);
+            }
+            if (ClearObject != null) {
+                ClearObject.Clear(FileName);
+            }
+        }
     }
 }

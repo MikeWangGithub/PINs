@@ -17,8 +17,12 @@ namespace PINs.Tools
         /// <param name="Info"></param>
         /// <returns></returns>
         bool Save(string Info);
-        void SetSaveObject(HashSet<T> ts);
-        void SetSaveObject(SortedSet<T> ts);
+        /// <summary>
+        /// Save ts to somewhere 
+        /// </summary>
+        /// <param name="ts"></param>
+        void SetSaveObject(ISet<T> ts);
+       
 
     }
 }

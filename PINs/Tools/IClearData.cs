@@ -7,21 +7,21 @@ using System.Threading.Tasks;
 namespace PINs.Tools
 {
     /// <summary>
-    /// LoadData interface .facilitate extends to FileLoad or DatabaseLoad
+    /// ClearData interface .facilitate extends to deletefile or delete data in table in Database
     /// </summary>
-    public interface ILoadData
+    public interface IClearData
     {
         /// <summary>
         /// Info : Physical FileName or ConnectionString of database
         /// </summary>
         /// <param name="Info"></param>
         /// <returns></returns>
-        bool Load(string Info);
+        bool Clear(string Info);
         /// <summary>
         /// Set Object which will be stored with digits
         /// </summary>
         /// <param name="ts"></param>
-        void SetLoadObject(ISet<int> ts);
+        void SetClearObject(ISet<int> ts);
 
     }
 }

@@ -8,20 +8,24 @@ using PINs.Tools;
 
 namespace PINs.Tools
 {
+    /// <summary>
+    /// Save data to a physical file
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class SaveDataToFile<T>:ISaveData<T>
     {
-        private AlgorithmType objType;
-        private Object SaveObj;
-        public void SetSaveObject(HashSet<T> obj)
+        //private AlgorithmType objType;
+        private ISet<T> SaveObj;
+        public void SetSaveObject(ISet<T> obj)
         {
-            objType = AlgorithmType.HashSet;
             SaveObj = obj;
         }
-        public void SetSaveObject(SortedSet<T> obj)
-        {
-            objType = AlgorithmType.RedBlackTree;
-            SaveObj = obj;
-        }
+        /// <summary>
+        /// Open a physical file and write digit in the file
+        /// Overwrite the file.
+        /// </summary>
+        /// <param name="FileName"></param>
+        /// <returns></returns>
         public bool Save(string FileName)
         {
             bool rtn;
@@ -29,22 +33,9 @@ namespace PINs.Tools
             {
                 //overwrite the file
                 StreamWriter sw = new StreamWriter(FileName, false, Encoding.UTF8);
-                switch (objType)
+                foreach (T item in SaveObj)
                 {
-                    case AlgorithmType.HashSet:
-                        foreach (T item in (HashSet<T>)SaveObj)
-                        {
-                            sw.WriteLine(item);
-                        }
-                        break;
-                    case AlgorithmType.RedBlackTree:
-                        foreach (T item in (SortedSet<T>)SaveObj)
-                        {
-                            sw.WriteLine(item);
-                        }
-                        break;
-                    default:
-                        break;
+                    sw.WriteLine(item);
                 }
                 sw.Close();
                 rtn = true;

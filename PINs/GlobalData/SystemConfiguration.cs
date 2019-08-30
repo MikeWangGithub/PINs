@@ -7,6 +7,11 @@ using PINs.Tools;
 
 namespace PINs.GlobalData
 {
+    /// <summary>
+    /// System Configuration .
+    /// All properties come from App.config
+    /// Global Class. Can be used by everyone and anywhere.
+    /// </summary>
     public static class SystemConfiguration
     {
         private static bool _Debug;
@@ -38,6 +43,20 @@ namespace PINs.GlobalData
         private static void SetLoadDataClassName(string value)
         {
             _LoadDataClassName = value;
+        }
+
+        private static string _ClearDataClassName;
+        public static string ClearDataClassName { get { return _ClearDataClassName; } }
+        private static void SetClearDataClassName(string value)
+        {
+            _ClearDataClassName = value;
+        }
+
+        private static string _AlgorithmClassName;
+        public static string AlgorithmClassName { get { return _AlgorithmClassName; } }
+        private static void SetAlgorithmClassName(string value)
+        {
+            _AlgorithmClassName = value;
         }
 
         private static List<string> _ExceptionNumberRegex;
@@ -151,6 +170,10 @@ namespace PINs.GlobalData
             SetSaveDataClassName(AppConfig.GetAppConfig("SaveDataClass"));
             //Set 
             SetLoadDataClassName(AppConfig.GetAppConfig("LoadDataClass"));
+            //Set 
+            SetClearDataClassName(AppConfig.GetAppConfig("ClearDataClass"));
+            //Set 
+            SetAlgorithmClassName(AppConfig.GetAppConfig("AlgorithmClass"));
             //Set 
             SetExceptionNumberRegex(AppConfig.GetAppConfig("ExceptionNumber"));
             //RightNumber

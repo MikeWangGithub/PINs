@@ -29,7 +29,6 @@ namespace PINs.Algorithm
             {
                 rtn = ran.Next(min, max + 1);
             }
-
             return rtn;
         }
     }
