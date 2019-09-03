@@ -38,6 +38,7 @@ namespace PINs.Threading
             this.IsTaskCanceled();
             int randIndex = 0;
             int rtn = -1;
+            bool flagExceptionSet = false,flagUsedSet= false;
             if (DigitSet.UnusedSet.Length > 0) {
                 //UnusedSet is not null. 
 
@@ -57,6 +58,7 @@ namespace PINs.Threading
                         DigitSet.UsedSet.Insert(rtn);
                         //Delete digit from UnusedSet
                         DigitSet.UnusedSet.Delete(rtn);
+                        flagUsedSet = true;
                         //judge if it is the last digit
                         if (DigitSet.UnusedSet.Length <= 0)
                         {
@@ -68,6 +70,7 @@ namespace PINs.Threading
                         //invalid digit
                         //Insert digit in ExceptionSet
                         DigitSet.ExceptionSet.Insert(rtn);
+                        flagExceptionSet = true;
                         //Delete digit from UnusedSet
                         DigitSet.UnusedSet.Delete(rtn);
                         //judge if it is the last digit
@@ -81,9 +84,9 @@ namespace PINs.Threading
                     
                 }
                 //Save node to somewhere
-                DigitSet.UsedSet.Save(SystemConfiguration.UsedDigitFileName);
-                DigitSet.UnusedSet.Save(SystemConfiguration.UnusedDigitFileName);
-                DigitSet.ExceptionSet.Save(SystemConfiguration.ExceptionDigitFileName);
+                DigitSet.UnusedSet.Save(SystemConfiguration.UnusedDigitDataSet);
+                if (flagUsedSet) DigitSet.UsedSet.Save(SystemConfiguration.UsedDigitDataSet);
+                if (flagExceptionSet) DigitSet.ExceptionSet.Save(SystemConfiguration.ExceptionDigitDataSet);
                 
             }
             else

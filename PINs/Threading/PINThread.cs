@@ -33,7 +33,7 @@ namespace PINs.Threading
         /// Parameter of this thread. can be defined by anyway
         /// </summary>
         protected ICloneable ThreadParameter;
-        // protected string reflectionName;
+
 
         public PINThread(CancellationTokenSource _tokenSource, ICloneable _threadParameter)
         {
@@ -75,6 +75,7 @@ namespace PINs.Threading
         /// <summary>
         /// mainly function what this thread want to do is in this function.
         /// it is needed to be implemented in childclass.
+        /// support recursive call
         /// </summary>
         /// <returns></returns>
         public abstract int RunSubThread();

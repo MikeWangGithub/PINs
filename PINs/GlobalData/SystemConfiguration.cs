@@ -52,6 +52,13 @@ namespace PINs.GlobalData
             _ClearDataClassName = value;
         }
 
+        private static string _DataInitialClass;
+        public static string DataInitialClass  { get { return _DataInitialClass; } }
+        private static void SetDataInitialClassName(string value)
+        {
+            _DataInitialClass = value;
+        }
+
         private static string _AlgorithmClassName;
         public static string AlgorithmClassName { get { return _AlgorithmClassName; } }
         private static void SetAlgorithmClassName(string value)
@@ -89,25 +96,25 @@ namespace PINs.GlobalData
         {
             _MaxDigit = value;
         }
-        private static  string _ExceptionDigitFileName;
-        public static  string ExceptionDigitFileName { get { return _ExceptionDigitFileName; } }
-        private static void SetExceptionDigitFileName(string value)
+        private static  string _ExceptionDigitDataSet;
+        public static  string ExceptionDigitDataSet { get { return _ExceptionDigitDataSet; } }
+        private static void SetExceptionDigitDataSet(string value)
         {
-            _ExceptionDigitFileName = value;
+            _ExceptionDigitDataSet = value;
         }
-        private static string _UsedDigitFileName;
-        public static string UsedDigitFileName { get { return _UsedDigitFileName; } }
+        private static string _UsedDigitDataSet;
+        public static string UsedDigitDataSet { get { return _UsedDigitDataSet; } }
 
-        private static void SetUsedDigitFileName(string value)
+        private static void SetUsedDigitDataSet(string value)
         {
-            _UsedDigitFileName = value;
+            _UsedDigitDataSet = value;
         }
 
-        private static  string _UnusedDigitFileName;
-        public static string UnusedDigitFileName { get { return _UnusedDigitFileName; } }
-        private static void SetUnusedDigitFileName(string value)
+        private static  string _UnusedDigitDataSet;
+        public static string UnusedDigitDataSet { get { return _UnusedDigitDataSet; } }
+        private static void SetUnusedDigitDataSet(string value)
         {
-            _UnusedDigitFileName = value;
+            _UnusedDigitDataSet = value;
         }
 
         private static string _AppPath;
@@ -139,24 +146,7 @@ namespace PINs.GlobalData
             SetAppPath(System.IO.Directory.GetCurrentDirectory());
         
             LoadConfiguraion();
-            if ((!IsExistsExceptionDigitFile()) || (!IsExistsUsedDigitFile()) || (!IsExistsUnusedDigitFile()))
-            {
-                if (!IsNeedNewGeneration)
-                {
-                    SaveIsNeedNewGeneration(true); //Need to create 3 files
-                    SetIsNeedNewGeneration(AppConfig.GetAppConfig("IsNeedNewGeneration").Trim().ToLower() == "true" ? true : false);
-                }
-            }
-            else
-            {
-                //3 files quantity must be 9999.
-                // miss check code
-
-                if (IsNeedNewGeneration)
-                {
-                    SaveIsNeedNewGeneration(false); //Need to create 3 files
-                }
-            }
+            
 
         }
         private static void LoadConfiguraion()
@@ -172,6 +162,8 @@ namespace PINs.GlobalData
             SetLoadDataClassName(AppConfig.GetAppConfig("LoadDataClass"));
             //Set 
             SetClearDataClassName(AppConfig.GetAppConfig("ClearDataClass"));
+            //Set 
+            SetDataInitialClassName(AppConfig.GetAppConfig("DataInitialClass"));
             //Set 
             SetAlgorithmClassName(AppConfig.GetAppConfig("AlgorithmClass"));
             //Set 
@@ -198,28 +190,17 @@ namespace PINs.GlobalData
                 SetMaxDigit(9999);
 
             }
-            //ExceptionDigitFileName
-            SetExceptionDigitFileName(AppPath + "\\" + AppConfig.GetAppConfig("ExceptionDigitFileName"));
-            //UsedDigitFileName
-            SetUsedDigitFileName(AppPath + "\\" + AppConfig.GetAppConfig("UsedDigitFileName"));
-            //UnusedDigitFileName
-            SetUnusedDigitFileName(AppPath + "\\" + AppConfig.GetAppConfig("UnusedDigitFileName"));
+            //ExceptionDigitDataSet
+            SetExceptionDigitDataSet(AppPath + "\\" + AppConfig.GetAppConfig("ExceptionDigitDataSet"));
+            //UsedDigitDataSet
+            SetUsedDigitDataSet(AppPath + "\\" + AppConfig.GetAppConfig("UsedDigitDataSet"));
+            //UnusedDigitDataSet
+            SetUnusedDigitDataSet(AppPath + "\\" + AppConfig.GetAppConfig("UnusedDigitDataSet"));
             //
             SetIsNeedNewGeneration(AppConfig.GetAppConfig("IsNeedNewGeneration").Trim().ToLower() == "true" ? true : false);
 
         }
-        public static bool IsExistsExceptionDigitFile()
-        {
-            return System.IO.File.Exists(ExceptionDigitFileName);
-        }
-        public static bool IsExistsUsedDigitFile()
-        {
-            return System.IO.File.Exists(UsedDigitFileName);
-        }
-        public static  bool IsExistsUnusedDigitFile()
-        {
-            return System.IO.File.Exists(UnusedDigitFileName);
-        }
+
 
         public static bool SaveIsNeedNewGeneration(bool value)
         {

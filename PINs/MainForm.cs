@@ -40,8 +40,10 @@ namespace PINs
             LoggerHelper.Initial(this.txtLog);
             //Clear TextBox.Text 
             this.txtNumber.Clear();
+            this.txtNumber.ReadOnly = true;
             //Clear TextBox.Text 
             this.txtCheckPIN.Clear();
+            this.txtCheckPIN.ReadOnly = false;
             //Don't need to wait thread. So don't use await and async
             RunThread(PINThreadName.DigitInitial);
             
@@ -213,9 +215,9 @@ namespace PINs
                     ,"Infomation"
                     , MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    DigitSet.ExceptionSet.Clear(SystemConfiguration.ExceptionDigitFileName);
-                    DigitSet.UnusedSet.Clear(SystemConfiguration.UnusedDigitFileName);
-                    DigitSet.UsedSet.Clear(SystemConfiguration.UsedDigitFileName);
+                    DigitSet.ExceptionSet.Clear(SystemConfiguration.ExceptionDigitDataSet);
+                    DigitSet.UnusedSet.Clear(SystemConfiguration.UnusedDigitDataSet);
+                    DigitSet.UsedSet.Clear(SystemConfiguration.UsedDigitDataSet);
                     DigitSet.SetReInitial();
                     this.BtnGetNumber_Click(sender, e);
                 }

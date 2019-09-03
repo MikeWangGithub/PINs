@@ -14,10 +14,15 @@ namespace PINs.Algorithm
     /// </summary>
     public class PINRedBlackTree : ISet<int>
     {
+        /// <summary>
+        /// Lock object .
+        /// if MultiThread use the sam resource ,use lock object for keep right result.
+        /// </summary>
         private object Lockobject = new object();
         private ISaveData<int> SaveObject;
         private ILoadData LoadObject;
         private IClearData ClearObject;
+        private IDataInitial InitialObject;
         /// <summary>
         /// .Net SortedSet Object. Only be operated by class self.
         /// </summary>
@@ -126,9 +131,9 @@ namespace PINs.Algorithm
             return RBTree.Contains(t);
         }
         /// <summary>
-        ///  Save all of nodes to a physical file
+        ///  Save all of nodes to a physical file/Database/.....
         /// </summary>
-        /// <param name="FileName">filename which include fullpath</param>
+        /// <param name="FileName">filename which include fullpathDataBase connection /......</param>
         /// <returns>Operation is sucessful,return true otherwise false</returns>
         public bool Save(string FileName)
         {
@@ -145,9 +150,9 @@ namespace PINs.Algorithm
 
         }
         /// <summary>
-        /// Load PIN data from a physical file
+        /// Load PIN data from a physical file/DataBase /......
         /// </summary>
-        /// <param name="FileName">filename which include fullpath</param>
+        /// <param name="FileName">filename which include fullpath/DataBase connection /......</param>
         /// <returns>Operation is sucessful,return true otherwise false</returns>
         public bool Load(string FileName)
         {
@@ -165,7 +170,7 @@ namespace PINs.Algorithm
         /// <summary>
         /// Clear all digits
         /// </summary>
-        /// <param name="FileName"></param>
+        /// <param name="FileName">filename which include fullpath/DataBase connection /......</param>
         public void Clear(string FileName)
         {
             Clear();
@@ -178,6 +183,28 @@ namespace PINs.Algorithm
             if (ClearObject != null)
             {
                 ClearObject.Clear(FileName);
+            }
+        }
+
+        /// <summary>
+        /// Judage if data initial.
+        /// </summary>
+        /// <param name="FileName">filename which include fullpath/DataBase connection /......</param>
+        public bool IsInitial(string FileName)
+        {
+            lock (Lockobject)
+            {
+                InitialObject = ObjectBuildFactory<IDataInitial>.Instance(SystemConfiguration.DataInitialClass);
+                if (InitialObject != null)
+                    InitialObject.SetInitialObject(RBTree);
+            }
+            if (InitialObject != null)
+            {
+                return InitialObject.IsInitial(FileName);
+            }
+            else
+            {
+                return false;
             }
         }
     }

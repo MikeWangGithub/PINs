@@ -109,21 +109,21 @@ namespace PINs.GlobalData
                 if (_UsedSet == null)
                     _UsedSet = ObjectBuildFactory<PINs.Algorithm.ISet<int>>.Instance(SystemConfiguration.AlgorithmClassName);
                 else
-                    _UsedSet.Clear(SystemConfiguration.UsedDigitFileName);
+                    _UsedSet.Clear(SystemConfiguration.UsedDigitDataSet);
             }
             lock (LockUnusedSet)
             {
                 if (_UnusedSet == null)
                     _UnusedSet = ObjectBuildFactory<PINs.Algorithm.ISet<int>>.Instance(SystemConfiguration.AlgorithmClassName);
                 else
-                    _UnusedSet.Clear(SystemConfiguration.UnusedDigitFileName);
+                    _UnusedSet.Clear(SystemConfiguration.UnusedDigitDataSet);
             }
             lock (LockExceptionSet)
             {
                 if (_ExceptionSet == null)
                     _ExceptionSet = ObjectBuildFactory<PINs.Algorithm.ISet<int>>.Instance(SystemConfiguration.AlgorithmClassName);
                 else
-                    _ExceptionSet.Clear(SystemConfiguration.ExceptionDigitFileName);
+                    _ExceptionSet.Clear(SystemConfiguration.ExceptionDigitDataSet);
             }
         }
         /// <summary>
@@ -148,9 +148,9 @@ namespace PINs.GlobalData
                     _ExceptionSet = ObjectBuildFactory<PINs.Algorithm.ISet<int>>.Instance(SystemConfiguration.AlgorithmClassName);
             }
             //Juage: if 1st execute this program
-            if (!SystemConfiguration.IsExistsExceptionDigitFile() ||
-                !SystemConfiguration.IsExistsUnusedDigitFile() ||
-                !SystemConfiguration.IsExistsUsedDigitFile()
+            if (!_UnusedSet.IsInitial(SystemConfiguration.UnusedDigitDataSet) ||
+                !_UsedSet.IsInitial(SystemConfiguration.UsedDigitDataSet) ||
+                !_ExceptionSet.IsInitial(SystemConfiguration.ExceptionDigitDataSet) 
 
                 )
             {
@@ -182,11 +182,11 @@ namespace PINs.GlobalData
                 LoggerHelper.Info("Digits' Set is prepared.\r\n");
 
                 //Save node to somewhere, now they are physical files.
-                _UnusedSet.Save(SystemConfiguration.UnusedDigitFileName);
+                _UnusedSet.Save(SystemConfiguration.UnusedDigitDataSet);
                 Debug("Unused set is saved  to file...\r\n");
-                _ExceptionSet.Save(SystemConfiguration.ExceptionDigitFileName);
+                _ExceptionSet.Save(SystemConfiguration.ExceptionDigitDataSet);
                 Debug("exception set is saved to file...\r\n");
-                _UsedSet.Save(SystemConfiguration.UsedDigitFileName);
+                _UsedSet.Save(SystemConfiguration.UsedDigitDataSet);
                 Debug("used set is saved to file...\r\n");
 
             }
@@ -197,21 +197,21 @@ namespace PINs.GlobalData
                 {
                     //not initial
                     //Load data to 3 Set from somewhere ,now they are physical files.
-                    _ExceptionSet.Load(SystemConfiguration.ExceptionDigitFileName);
+                    _ExceptionSet.Load(SystemConfiguration.ExceptionDigitDataSet);
                     lock (LockExceptionSet)
                     {
                         ExceptionSetStatus = true;
                     }
                     Debug("excepiton set is loaded ...\r\n");
 
-                    _UsedSet.Load(SystemConfiguration.UsedDigitFileName);
+                    _UsedSet.Load(SystemConfiguration.UsedDigitDataSet);
                     lock (LockUsedSet)
                     {
                         UsedSetStatus = true;
                     }
                     Debug("used set is loaded ...\r\n");
 
-                    _UnusedSet.Load(SystemConfiguration.UnusedDigitFileName);
+                    _UnusedSet.Load(SystemConfiguration.UnusedDigitDataSet);
                     lock (LockUnusedSet)
                     {
                         UnusedSetStatus = true;

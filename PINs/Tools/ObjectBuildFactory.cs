@@ -15,7 +15,7 @@ namespace PINs.Tools
         /// <summary>
         /// Create concrete class by ClassName
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">fullClasName</param>
         /// <returns></returns>
         public static T Instance(string key)
         {

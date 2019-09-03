@@ -8,6 +8,7 @@ namespace PINs.Algorithm
 {
     /// <summary>
     /// BinaryTree / HashTable Interface which save any type's object in the set
+    /// In this program the type will be saved in the ISet is Integer
     /// </summary>
     /// <typeparam name="T">Node Type</typeparam>
     public interface ISet<T> 
@@ -31,7 +32,7 @@ namespace PINs.Algorithm
         /// <returns>If The tree contains the PIN(the value of t),return true otherwise false</returns>
         bool Contains(T t);
         /// <summary>
-        /// Clear nodes.
+        /// Clear all nodes.
         /// </summary>
          void Clear(string inof);
 
@@ -40,8 +41,15 @@ namespace PINs.Algorithm
         /// </summary>
         int Length { get; }
 
+        /// <summary>
+        /// For loop 
+        /// </summary>
         IEnumerable<T> Items { get; }
-
+        /// <summary>
+        /// Get value by Index of node
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         T GetValue(int index);
         /// <summary>
         /// Save data to somewhere.a physical file / a database / cloudy storage ...
@@ -56,6 +64,12 @@ namespace PINs.Algorithm
         /// <param name="info">FileName/ConnectionString/cloudypath/...</param>
         /// <returns></returns>
         bool Load(string info);
+        /// <summary>
+        /// Judge if data initial
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        bool IsInitial(string info);
 
     }
 }

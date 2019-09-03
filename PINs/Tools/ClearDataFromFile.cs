@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace PINs.Tools
 {
+    /// <summary>
+    /// Clear data
+    /// </summary>
     public class ClearDataFromFile: IClearData
     {
+        /// <summary>
+        /// ISet object ,maybe hashset, RebBlackTree ... 
+        /// </summary>
         private ISet<int> ClearObj;
         public void SetClearObject(ISet<int> obj)
         {
@@ -17,7 +23,7 @@ namespace PINs.Tools
         /// <summary>
         /// Delete a physical file 
         /// </summary>
-        /// <param name="FileName"></param>
+        /// <param name="FileName">a physical file </param>
         /// <returns></returns>
         public bool Clear(string FileName)
         {

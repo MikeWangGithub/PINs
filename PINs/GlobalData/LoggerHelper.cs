@@ -25,7 +25,7 @@ namespace PINs.GlobalData
         private static object LockObect = new object();
         /// <summary>
         /// Initial Log instance
-        /// By DIP, dynamic create log
+        /// By DIP, dynamic create log class
         /// </summary>
         /// <param name="obj"></param>
         public static void Initial(Object obj)
